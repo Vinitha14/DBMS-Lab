@@ -1,0 +1,332 @@
+mysql> create database INSTITUTE;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use INSTITUTE;
+Database changed
+
+mysql> create table Student(
+    -> RollNo char(9),
+    -> SName varchar(15),
+    -> Department char(3),
+    -> BDate date,
+    -> primary key(RollNo)
+    -> );
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_INSTITUTE |
++---------------------+
+| Student             |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> create table Course(
+    -> CourseNo char(7),
+    -> CName varchar(20),
+    -> Dept char(3),
+    -> primary key(CourseNo)
+    -> );
+Query OK, 0 rows affected (0.26 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_INSTITUTE |
++---------------------+
+| Course              |
+| Student             |
++---------------------+
+2 rows in set (0.00 sec)
+
+mysql> create table BooksAdopted(
+    -> CNo char(7),
+    -> Sem int,
+    -> ISBN int,
+    -> primary key(CNo)
+    -> );
+Query OK, 0 rows affected (0.26 sec)
+
+mysql> create table Enroll(
+    -> ERNo char(9),
+    -> ECNo char(7),
+    -> Semester int,
+    -> Year int,
+    -> primary key(ERNo)
+    -> );
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_INSTITUTE |
++---------------------+
+| BooksAdopted        |
+| Course              |
+| Enroll              |
+| Student             |
++---------------------+
+4 rows in set (0.00 sec)
+
+mysql> create table Textbook(
+    -> isbn int,
+    -> Title varchar(20),
+    -> Publisher varchar(20),
+    -> primary key(isbn)
+    -> );
+Query OK, 0 rows affected (0.29 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_INSTITUTE |
++---------------------+
+| BooksAdopted        |
+| Course              |
+| Enroll              |
+| Student             |
+| Textbook            |
++---------------------+
+5 rows in set (0.00 sec)
+
+mysql> desc Student;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| RollNo     | char(9)     | NO   | PRI | NULL    |       |
+| SName      | varchar(15) | YES  |     | NULL    |       |
+| Department | char(3)     | YES  |     | NULL    |       |
+| BDate      | date        | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> insert into Student values('COE16B042','VINITHA','COE','1998-09-14');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Student values('COE16B041','MEGHANA','COE','1999-06-18');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Student values('COE16B043','TMEGHANA','COE','1999-02-08');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Student values('EDM16B011','HARSHITHA','EDM','1999-03-26');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into Student values('EDM16B016','BHARATI','EDM','1998-09-28');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> desc Student;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| RollNo     | char(9)     | NO   | PRI | NULL    |       |
+| SName      | varchar(15) | YES  |     | NULL    |       |
+| Department | char(3)     | YES  |     | NULL    |       |
+| BDate      | date        | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Student;
++-----------+-----------+------------+------------+
+| RollNo    | SName     | Department | BDate      |
++-----------+-----------+------------+------------+
+| COE16B041 | MEGHANA   | COE        | 1999-06-18 |
+| COE16B042 | VINITHA   | COE        | 1998-09-14 |
+| COE16B043 | TMEGHANA  | COE        | 1999-02-08 |
+| EDM16B011 | HARSHITHA | EDM        | 1999-03-26 |
+| EDM16B016 | BHARATI   | EDM        | 1998-09-28 |
++-----------+-----------+------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> insert into Cours Course(
+    -> ^C
+mysql> insert into Course(
+    -> ^C
+mysql> insert into Course values(
+    -> 'MAN201T','SOCIOLOGY','EDM');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Course values( 'COM201T','ALGORITHMS','COE');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Course values( 'MAT201T','LINEAR ALGEBRA','EDM');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into Course values( 'MAT202T','PROBABILITY','COE');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Course values( 'COM202T','DATABASE','COE');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Course;
++----------+----------------+------+
+| CourseNo | CName          | Dept |
++----------+----------------+------+
+| COM201T  | ALGORITHMS     | COE  |
+| COM202T  | DATABASE       | COE  |
+| MAN201T  | SOCIOLOGY      | EDM  |
+| MAT201T  | LINEAR ALGEBRA | EDM  |
+| MAT202T  | PROBABILITY    | COE  |
++----------+----------------+------+
+5 rows in set (0.00 sec)
+
+mysql> insert into Enroll values( 'COE16B042','COM201T','3','2017');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Enroll values( 'COE16B041','COM202T','4','2018');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Enroll values( 'COE16B043','MAT202T','4','2018');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Enroll values( 'EDM16B011','MAT201T','3','2017');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Enroll values( 'EDM16B016','MAN201T','4','2018');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Enroll;
++-----------+---------+----------+------+
+| ERNo      | ECNo    | Semester | Year |
++-----------+---------+----------+------+
+| COE16B041 | COM202T |        4 | 2018 |
+| COE16B042 | COM201T |        3 | 2017 |
+| COE16B043 | MAT202T |        4 | 2018 |
+| EDM16B011 | MAT201T |        3 | 2017 |
+| EDM16B016 | MAN201T |        4 | 2018 |
++-----------+---------+----------+------+
+5 rows in set (0.00 sec)
+
+mysql> insert into BooksAdopted values('MAN201T','4','10003');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into BooksAdopted values('MAT201T','3','10004');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into BooksAdopted values('MAT202T','4','10005');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into BooksAdopted values('COM201T','3','10001');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into BooksAdopted values('COM202T','4','10002');
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select * from BooksAdopted;
++---------+------+-------+
+| CNo     | Sem  | ISBN  |
++---------+------+-------+
+| COM201T |    3 | 10001 |
+| COM202T |    4 | 10002 |
+| MAN201T |    4 | 10003 |
+| MAT201T |    3 | 10004 |
+| MAT202T |    4 | 10005 |
++---------+------+-------+
+5 rows in set (0.00 sec)
+
+mysql> insert into Textbook values('10001','Intro to Algo','T CORMEN');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Textbook values('10002','Database Systems','NAVATHE');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Textbook values('10003','Intro to Socio','GEORGE');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into Textbook values('10004','Linear Algebra','HOFFMAN KUNZE');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Textbook values('10005','Prob Theory','S ROSS');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from Textbook;
++-------+------------------+---------------+
+| isbn  | Title            | Publisher     |
++-------+------------------+---------------+
+| 10001 | Intro to Algo    | T CORMEN      |
+| 10002 | Database Systems | NAVATHE       |
+| 10003 | Intro to Socio   | GEORGE        |
+| 10004 | Linear Algebra   | HOFFMAN KUNZE |
+| 10005 | Prob Theory      | S ROSS        |
++-------+------------------+---------------+
+5 rows in set (0.00 sec)
+
+
+mysql> select * from Student;
+ERROR 1046 (3D000): No database selected
+mysql> use INSTITUTE;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from Student;
++-----------+-----------+------------+------------+
+| RollNo    | SName     | Department | BDate      |
++-----------+-----------+------------+------------+
+| COE16B041 | MEGHANA   | COE        | 1999-06-18 |
+| COE16B042 | VINITHA   | COE        | 1998-09-14 |
+| COE16B043 | TMEGHANA  | COE        | 1999-02-08 |
+| EDM16B011 | HARSHITHA | EDM        | 1999-03-26 |
+| EDM16B016 | BHARATI   | EDM        | 1998-09-28 |
++-----------+-----------+------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> Terminal close -- exit!
+Aborted
+mysql> select * from Student;
++-----------+-----------+------------+------------+
+| RollNo    | SName     | Department | BDate      |
++-----------+-----------+------------+------------+
+| COE16B041 | MEGHANA   | COE        | 1999-06-18 |
+| COE16B042 | VINITHA   | COE        | 1998-09-14 |
+| COE16B043 | TMEGHANA  | COE        | 1999-02-08 |
+| EDM16B011 | HARSHITHA | EDM        | 1999-03-26 |
+| EDM16B016 | BHARATI   | EDM        | 1998-09-28 |
++-----------+-----------+------------+------------+
+5 rows in set (0.01 sec)
+
+mysql> select * from Course;
++----------+----------------+------+
+| CourseNo | CName          | Dept |
++----------+----------------+------+
+| COM201T  | ALGORITHMS     | COE  |
+| COM202T  | DATABASE       | COE  |
+| MAN201T  | SOCIOLOGY      | EDM  |
+| MAT201T  | LINEAR ALGEBRA | EDM  |
+| MAT202T  | PROBABILITY    | COE  |
++----------+----------------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Enroll;
++-----------+---------+----------+------+
+| ERNo      | ECNo    | Semester | Year |
++-----------+---------+----------+------+
+| COE16B041 | COM202T |        4 | 2018 |
+| COE16B042 | COM201T |        3 | 2017 |
+| COE16B043 | MAT202T |        4 | 2018 |
+| EDM16B011 | MAT201T |        3 | 2017 |
+| EDM16B016 | MAN201T |        4 | 2018 |
++-----------+---------+----------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from BooksAdopted;
++---------+------+-------+
+| CNo     | Sem  | ISBN  |
++---------+------+-------+
+| COM201T |    3 | 10001 |
+| COM202T |    4 | 10002 |
+| MAN201T |    4 | 10003 |
+| MAT201T |    3 | 10004 |
+| MAT202T |    4 | 10005 |
++---------+------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Textbook;
++-------+------------------+---------------+
+| isbn  | Title            | Publisher     |
++-------+------------------+---------------+
+| 10001 | Intro to Algo    | T CORMEN      |
+| 10002 | Database Systems | NAVATHE       |
+| 10003 | Intro to Socio   | GEORGE        |
+| 10004 | Linear Algebra   | HOFFMAN KUNZE |
+| 10005 | Prob Theory      | S ROSS        |
++-------+------------------+---------------+
+5 rows in set (0.00 sec)
+

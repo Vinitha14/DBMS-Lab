@@ -1,0 +1,979 @@
+
+mysql> create table course(course_id varchar(8), title varchar(50), dept_name varchar(20), credits int, primary key(course_id));
+Query OK, 0 rows affected (0.68 sec)
+
+mysql> create table section(course_id varchar(8), sec_id varchar(8), semester varchar(6) check (semester in ('Fall', 'Winter', 'Spring', 'Summer')), year numeric(4,0) check (year > 1701 and year < 2100), building varchar(15), room_number varchar(7), time_slot_id varchar(4), primary key (course_id, sec_id, semester, year));
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> 
+mysql> create table teaches(ID varchar(5), course_id varchar(8), sec_id varchar(8), semester varchar(6), year numeric(4,0), primary key (ID, course_id, sec_id, semester, year));
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> 
+mysql> create table student(ID varchar(5), name varchar(20) not null, dept_name varchar(20), tot_cred numeric(3,0) check (tot_cred >= 0), primary key (ID));
+Query OK, 0 rows affected (0.23 sec)
+
+mysql> 
+mysql> create table takes(ID varchar(5), course_id varchar(8), sec_id varchar(8), semester varchar(6), year numeric(4,0), grade varchar(2), primary key (ID, course_id, sec_id, semester, year));
+Query OK, 0 rows affected (0.41 sec)
+
+mysql> 
+mysql> create table advisor(s_ID varchar(5), i_ID varchar(5), primary key (s_ID));
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> 
+mysql> create table prereq(course_id varchar(8), prereq_id varchar(8), primary key (course_id, prereq_id));
+Query OK, 0 rows affected (0.24 sec)
+
+mysql> create table time_slot(time_slot_id varchar(4), day varchar(1), start_hr int, start_min int, end_hr int, end_min int, primary key (time_slot_id, day, start_hr, start_min));
+Query OK, 0 rows affected (0.65 sec)
+
+mysql> create table classroom(building varchar(15), room_number varchar(7), capacity int, primary key (building, room_number));
+Query OK, 0 rows affected (0.37 sec)
+
+mysql> create table department(dept_name varchar(20), building varchar(15), budget float ,primary key (dept_name));
+Query OK, 0 rows affected (1.00 sec)
+
+mysql> create table instructor(ID varchar(5), name varchar(20) not null, dept_name varchar(20), salary numeric(8,2), primary key (ID));
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> show tables;
++----------------------+
+| Tables_in_UNIVERSITY |
++----------------------+
+| advisor              |
+| classroom            |
+| course               |
+| department           |
+| instructor           |
+| prereq               |
+| section              |
+| student              |
+| takes                |
+| teaches              |
+| time_slot            |
++----------------------+
+11 rows in set (0.01 sec)
+
+mysql> select * from department;
++-------------+-------------+--------+
+| dept_name   | building    | budget |
++-------------+-------------+--------+
+| Accounting  | Saucon      | 441841 |
+| Astronomy   | Taylor      | 617254 |
+| Athletics   | Bronfman    | 734551 |
+| Biology     | Candlestick | 647611 |
+| Civil Eng.  | Chandler    | 255041 |
+| Comp. Sci.  | Lamberton   | 106379 |
+| Cybernetics | Mercer      | 794541 |
+| Elec. Eng.  | Main        | 276528 |
+| English     | Palmer      | 611043 |
+| Finance     | Candlestick | 866832 |
+| Geology     | Palmer      | 406558 |
+| History     | Taylor      | 699141 |
+| Languages   | Linderman   | 601284 |
+| Marketing   | Lambeau     | 210628 |
+| Math        | Brodhead    | 777605 |
+| Mech. Eng.  | Rauch       | 520351 |
+| Physics     | Wrigley     | 942163 |
+| Pol. Sci.   | Whitman     | 573745 |
+| Psychology  | Thompson    | 848175 |
+| Statistics  | Taylor      | 395052 |
++-------------+-------------+--------+
+20 rows in set (0.00 sec)
+
+query 1:
+mysql> select c.course_id,s.time_slot_id from course as c,section as s where c.course_id=s.course_id;
++-----------+--------------+
+| course_id | time_slot_id |
++-----------+--------------+
+| 105       | C            |
+| 105       | C            |
+| 137       | I            |
+| 158       | F            |
+| 158       | D            |
+| 169       | A            |
+| 169       | L            |
+| 192       | B            |
+| 200       | D            |
+| 200       | D            |
+| 237       | D            |
+| 237       | J            |
+| 239       | C            |
+| 242       | C            |
+| 258       | K            |
+| 270       | M            |
+| 274       | N            |
+| 304       | H            |
+| 313       | N            |
+| 319       | E            |
+| 334       | O            |
+| 338       | G            |
+| 338       | J            |
+| 345       | A            |
+| 349       | K            |
+| 352       | M            |
+| 362       | I            |
+| 362       | A            |
+| 362       | L            |
+| 366       | O            |
+| 376       | K            |
+| 400       | M            |
+| 400       | O            |
+| 401       | A            |
+| 408       | C            |
+| 408       | J            |
+| 415       | D            |
+| 421       | E            |
+| 426       | G            |
+| 443       | O            |
+| 443       | K            |
+| 445       | J            |
+| 457       | D            |
+| 461       | P            |
+| 468       | J            |
+| 468       | L            |
+| 476       | C            |
+| 482       | H            |
+| 486       | K            |
+| 489       | D            |
+| 493       | H            |
+| 496       | I            |
+| 527       | M            |
+| 545       | P            |
+| 559       | J            |
+| 561       | L            |
+| 571       | I            |
+| 581       | G            |
+| 591       | F            |
+| 599       | D            |
+| 603       | P            |
+| 604       | N            |
+| 612       | G            |
+| 626       | B            |
+| 629       | F            |
+| 631       | E            |
+| 642       | D            |
+| 663       | D            |
+| 679       | D            |
+| 692       | I            |
+| 694       | O            |
+| 696       | E            |
+| 702       | O            |
+| 704       | E            |
+| 735       | D            |
+| 735       | D            |
+| 747       | K            |
+| 748       | L            |
+| 760       | A            |
+| 791       | H            |
+| 793       | F            |
+| 795       | D            |
+| 802       | J            |
+| 808       | M            |
+| 843       | J            |
+| 852       | F            |
+| 864       | D            |
+| 867       | E            |
+| 867       | M            |
+| 875       | P            |
+| 893       | B            |
+| 927       | F            |
+| 949       | B            |
+| 959       | M            |
+| 960       | J            |
+| 960       | M            |
+| 962       | L            |
+| 972       | J            |
+| 974       | H            |
+| 991       | J            |
++-----------+--------------+
+100 rows in set (0.05 sec)
+
+mysql> desc student;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| ID        | varchar(5)   | NO   | PRI | NULL    |       |
+| name      | varchar(20)  | NO   |     | NULL    |       |
+| dept_name | varchar(20)  | YES  |     | NULL    |       |
+| tot_cred  | decimal(3,0) | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc instructor;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| ID        | varchar(5)   | NO   | PRI | NULL    |       |
+| name      | varchar(20)  | NO   |     | NULL    |       |
+| dept_name | varchar(20)  | YES  |     | NULL    |       |
+| salary    | decimal(8,2) | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+query 2:
+mysql> select a.i_ID,count(a.s_ID) from advisor a,instructor i,student s  where a.i_ID=i.ID and a.s_ID=s.ID and s.dept_name=i.dept_name group by a.i_ID;
++-------+---------------+
+| i_ID  | count(a.s_ID) |
++-------+---------------+
+| 14365 |             3 |
+| 15347 |             2 |
+| 16807 |             5 |
+| 19368 |             1 |
+| 22591 |             3 |
+| 25946 |             3 |
+| 28097 |             1 |
+| 28400 |             2 |
+| 3199  |             1 |
+| 34175 |             1 |
+| 35579 |             7 |
+| 36897 |             1 |
+| 37687 |             3 |
+| 41930 |             2 |
+| 4233  |             2 |
+| 42782 |             1 |
+| 48507 |             1 |
+| 48570 |             1 |
+| 50330 |             5 |
+| 52647 |             4 |
+| 57180 |             2 |
+| 58558 |             3 |
+| 59795 |             4 |
+| 63287 |             1 |
+| 64871 |             3 |
+| 6569  |             1 |
+| 65931 |             2 |
+| 72553 |             3 |
+| 73623 |             2 |
+| 74420 |             2 |
+| 74426 |             2 |
+| 77346 |             5 |
+| 79081 |             1 |
+| 79653 |             1 |
+| 80759 |             1 |
+| 81991 |             1 |
+| 90376 |             1 |
+| 95709 |             4 |
+| 96895 |             1 |
+| 97302 |             4 |
+| 99052 |             1 |
++-------+---------------+
+41 rows in set (0.01 sec)
+
+query 3:
+mysql> select s.dept_name,t.year,s.ID from takes t,student s where t.course_id="400" and t.ID=s.ID order by s.dept_name,t.year,s.ID;
++-------------+------+-------+
+| dept_name   | year | ID    |
++-------------+------+-------+
+| Accounting  | 2003 | 10838 |
+| Accounting  | 2003 | 1087  |
+| Accounting  | 2003 | 12683 |
+| Accounting  | 2003 | 34126 |
+| Accounting  | 2003 | 39157 |
+| Accounting  | 2003 | 39876 |
+| Accounting  | 2003 | 43989 |
+| Accounting  | 2003 | 49792 |
+| Accounting  | 2003 | 58326 |
+| Accounting  | 2003 | 62373 |
+| Accounting  | 2003 | 81884 |
+| Accounting  | 2003 | 898   |
+| Accounting  | 2003 | 94620 |
+| Accounting  | 2003 | 94726 |
+| Accounting  | 2003 | 95027 |
+| Accounting  | 2003 | 97400 |
+| Accounting  | 2007 | 16907 |
+| Accounting  | 2007 | 2133  |
+| Accounting  | 2007 | 28952 |
+| Accounting  | 2007 | 34126 |
+| Accounting  | 2007 | 34331 |
+| Accounting  | 2007 | 41211 |
+| Accounting  | 2007 | 4435  |
+| Accounting  | 2007 | 4682  |
+| Accounting  | 2007 | 53185 |
+| Accounting  | 2007 | 57238 |
+| Accounting  | 2007 | 65205 |
+| Accounting  | 2007 | 69521 |
+| Accounting  | 2007 | 83204 |
+| Accounting  | 2007 | 898   |
+| Astronomy   | 2003 | 16453 |
+| Astronomy   | 2003 | 2177  |
+| Astronomy   | 2003 | 31079 |
+| Astronomy   | 2003 | 32506 |
+| Astronomy   | 2003 | 34158 |
+| Astronomy   | 2003 | 49450 |
+| Astronomy   | 2003 | 57107 |
+| Astronomy   | 2003 | 61166 |
+| Astronomy   | 2003 | 69471 |
+| Astronomy   | 2003 | 78143 |
+| Astronomy   | 2003 | 79210 |
+| Astronomy   | 2003 | 82039 |
+| Astronomy   | 2003 | 88577 |
+| Astronomy   | 2003 | 92849 |
+| Astronomy   | 2007 | 1826  |
+| Astronomy   | 2007 | 2501  |
+| Astronomy   | 2007 | 288   |
+| Astronomy   | 2007 | 34195 |
+| Astronomy   | 2007 | 40059 |
+| Astronomy   | 2007 | 43432 |
+| Astronomy   | 2007 | 43495 |
+| Astronomy   | 2007 | 43658 |
+| Astronomy   | 2007 | 46106 |
+| Astronomy   | 2007 | 53788 |
+| Astronomy   | 2007 | 55859 |
+| Astronomy   | 2007 | 61166 |
+| Astronomy   | 2007 | 70452 |
+| Astronomy   | 2007 | 77003 |
+| Astronomy   | 2007 | 78143 |
+| Astronomy   | 2007 | 90082 |
+| Astronomy   | 2007 | 93653 |
+| Athletics   | 2003 | 12666 |
+| Athletics   | 2003 | 14668 |
+| Athletics   | 2003 | 15487 |
+| Athletics   | 2003 | 15538 |
+| Athletics   | 2003 | 17607 |
+| Athletics   | 2003 | 22086 |
+| Athletics   | 2003 | 27043 |
+| Athletics   | 2003 | 30110 |
+| Athletics   | 2003 | 30164 |
+| Athletics   | 2003 | 48678 |
+| Athletics   | 2003 | 58413 |
+| Athletics   | 2003 | 5843  |
+| Athletics   | 2003 | 65299 |
+| Athletics   | 2003 | 69285 |
+| Athletics   | 2003 | 81207 |
+| Athletics   | 2003 | 88417 |
+| Athletics   | 2003 | 88801 |
+| Athletics   | 2003 | 8957  |
+| Athletics   | 2007 | 15487 |
+| Athletics   | 2007 | 31080 |
+| Athletics   | 2007 | 37103 |
+| Athletics   | 2007 | 57780 |
+| Athletics   | 2007 | 58413 |
+| Athletics   | 2007 | 5871  |
+| Athletics   | 2007 | 69230 |
+| Athletics   | 2007 | 78756 |
+| Athletics   | 2007 | 9183  |
+| Athletics   | 2007 | 94371 |
+| Athletics   | 2007 | 987   |
+| Biology     | 2003 | 22226 |
+| Biology     | 2003 | 22396 |
+| Biology     | 2003 | 34322 |
+| Biology     | 2003 | 42298 |
+| Biology     | 2003 | 48850 |
+| Biology     | 2003 | 66494 |
+| Biology     | 2003 | 67018 |
+| Biology     | 2003 | 67407 |
+| Biology     | 2003 | 67660 |
+| Biology     | 2003 | 6990  |
+| Biology     | 2003 | 81789 |
+| Biology     | 2003 | 86075 |
+| Biology     | 2003 | 92659 |
+| Biology     | 2003 | 9953  |
+| Biology     | 2007 | 18007 |
+| Biology     | 2007 | 22396 |
+| Biology     | 2007 | 3163  |
+| Biology     | 2007 | 41674 |
+| Biology     | 2007 | 42688 |
+| Biology     | 2007 | 544   |
+| Biology     | 2007 | 62728 |
+| Biology     | 2007 | 69122 |
+| Biology     | 2007 | 75596 |
+| Biology     | 2007 | 90181 |
+| Civil Eng.  | 2003 | 14182 |
+| Civil Eng.  | 2003 | 24932 |
+| Civil Eng.  | 2003 | 28133 |
+| Civil Eng.  | 2003 | 34788 |
+| Civil Eng.  | 2003 | 35198 |
+| Civil Eng.  | 2003 | 36263 |
+| Civil Eng.  | 2003 | 36926 |
+| Civil Eng.  | 2003 | 41894 |
+| Civil Eng.  | 2003 | 55915 |
+| Civil Eng.  | 2003 | 59908 |
+| Civil Eng.  | 2003 | 64169 |
+| Civil Eng.  | 2003 | 6474  |
+| Civil Eng.  | 2003 | 65101 |
+| Civil Eng.  | 2003 | 6523  |
+| Civil Eng.  | 2003 | 68712 |
+| Civil Eng.  | 2003 | 70924 |
+| Civil Eng.  | 2003 | 8192  |
+| Civil Eng.  | 2003 | 8252  |
+| Civil Eng.  | 2003 | 96067 |
+| Civil Eng.  | 2003 | 97551 |
+| Civil Eng.  | 2007 | 1110  |
+| Civil Eng.  | 2007 | 12362 |
+| Civil Eng.  | 2007 | 13753 |
+| Civil Eng.  | 2007 | 1827  |
+| Civil Eng.  | 2007 | 32385 |
+| Civil Eng.  | 2007 | 33107 |
+| Civil Eng.  | 2007 | 33201 |
+| Civil Eng.  | 2007 | 35198 |
+| Civil Eng.  | 2007 | 38336 |
+| Civil Eng.  | 2007 | 41299 |
+| Civil Eng.  | 2007 | 44836 |
+| Civil Eng.  | 2007 | 44998 |
+| Civil Eng.  | 2007 | 53803 |
+| Civil Eng.  | 2007 | 57431 |
+| Civil Eng.  | 2007 | 65101 |
+| Civil Eng.  | 2007 | 66229 |
+| Civil Eng.  | 2007 | 68712 |
+| Civil Eng.  | 2007 | 75273 |
+| Civil Eng.  | 2007 | 94801 |
+| Civil Eng.  | 2007 | 96178 |
+| Civil Eng.  | 2007 | 96227 |
+| Civil Eng.  | 2007 | 97551 |
+| Civil Eng.  | 2007 | 98619 |
+| Civil Eng.  | 2007 | 99226 |
+| Comp. Sci.  | 2003 | 25525 |
+| Comp. Sci.  | 2003 | 31993 |
+| Comp. Sci.  | 2003 | 38973 |
+| Comp. Sci.  | 2003 | 47265 |
+| Comp. Sci.  | 2003 | 65703 |
+| Comp. Sci.  | 2003 | 66054 |
+| Comp. Sci.  | 2003 | 70061 |
+| Comp. Sci.  | 2003 | 76246 |
+| Comp. Sci.  | 2003 | 76743 |
+| Comp. Sci.  | 2003 | 914   |
+| Comp. Sci.  | 2003 | 9495  |
+| Comp. Sci.  | 2003 | 96741 |
+| Comp. Sci.  | 2003 | 993   |
+| Comp. Sci.  | 2007 | 18775 |
+| Comp. Sci.  | 2007 | 19245 |
+| Comp. Sci.  | 2007 | 19848 |
+| Comp. Sci.  | 2007 | 24784 |
+| Comp. Sci.  | 2007 | 32490 |
+| Comp. Sci.  | 2007 | 39310 |
+| Comp. Sci.  | 2007 | 43130 |
+| Comp. Sci.  | 2007 | 46450 |
+| Comp. Sci.  | 2007 | 47001 |
+| Comp. Sci.  | 2007 | 48053 |
+| Comp. Sci.  | 2007 | 65703 |
+| Comp. Sci.  | 2007 | 66054 |
+| Comp. Sci.  | 2007 | 7732  |
+| Comp. Sci.  | 2007 | 79763 |
+| Comp. Sci.  | 2007 | 82066 |
+| Comp. Sci.  | 2007 | 87246 |
+| Comp. Sci.  | 2007 | 90663 |
+| Comp. Sci.  | 2007 | 914   |
+| Comp. Sci.  | 2007 | 92417 |
+| Comp. Sci.  | 2007 | 96203 |
+| Comp. Sci.  | 2007 | 97590 |
+| Cybernetics | 2003 | 21126 |
+| Cybernetics | 2003 | 25077 |
+| Cybernetics | 2003 | 37759 |
+| Cybernetics | 2003 | 47630 |
+| Cybernetics | 2003 | 53799 |
+| Cybernetics | 2003 | 56    |
+| Cybernetics | 2003 | 76049 |
+| Cybernetics | 2003 | 80285 |
+| Cybernetics | 2003 | 82974 |
+| Cybernetics | 2003 | 91978 |
+| Cybernetics | 2003 | 95697 |
+| Cybernetics | 2007 | 16133 |
+| Cybernetics | 2007 | 19450 |
+| Cybernetics | 2007 | 22057 |
+| Cybernetics | 2007 | 23449 |
+| Cybernetics | 2007 | 25077 |
+| Cybernetics | 2007 | 30161 |
+| Cybernetics | 2007 | 42114 |
+| Cybernetics | 2007 | 46337 |
+| Cybernetics | 2007 | 56    |
+| Cybernetics | 2007 | 58606 |
+| Cybernetics | 2007 | 73387 |
+| Cybernetics | 2007 | 86969 |
+| Cybernetics | 2007 | 86981 |
+| Cybernetics | 2007 | 91992 |
+| Cybernetics | 2007 | 93366 |
+| Cybernetics | 2007 | 94846 |
+| Elec. Eng.  | 2003 | 1836  |
+| Elec. Eng.  | 2003 | 23525 |
+| Elec. Eng.  | 2003 | 24116 |
+| Elec. Eng.  | 2003 | 34018 |
+| Elec. Eng.  | 2003 | 4034  |
+| Elec. Eng.  | 2003 | 57377 |
+| Elec. Eng.  | 2003 | 60748 |
+| Elec. Eng.  | 2003 | 645   |
+| Elec. Eng.  | 2003 | 66356 |
+| Elec. Eng.  | 2003 | 68453 |
+| Elec. Eng.  | 2003 | 72501 |
+| Elec. Eng.  | 2007 | 21225 |
+| Elec. Eng.  | 2007 | 2178  |
+| Elec. Eng.  | 2007 | 23994 |
+| Elec. Eng.  | 2007 | 31516 |
+| Elec. Eng.  | 2007 | 36052 |
+| Elec. Eng.  | 2007 | 36791 |
+| Elec. Eng.  | 2007 | 38668 |
+| Elec. Eng.  | 2007 | 4860  |
+| Elec. Eng.  | 2007 | 57377 |
+| Elec. Eng.  | 2007 | 64013 |
+| Elec. Eng.  | 2007 | 645   |
+| Elec. Eng.  | 2007 | 68096 |
+| Elec. Eng.  | 2007 | 72669 |
+| Elec. Eng.  | 2007 | 74016 |
+| Elec. Eng.  | 2007 | 80976 |
+| Elec. Eng.  | 2007 | 90814 |
+| Elec. Eng.  | 2007 | 95175 |
+| English     | 2003 | 13403 |
+| English     | 2003 | 37869 |
+| English     | 2003 | 52523 |
+| English     | 2003 | 82083 |
+| English     | 2003 | 83170 |
+| English     | 2003 | 85614 |
+| English     | 2003 | 87193 |
+| English     | 2003 | 91091 |
+| English     | 2003 | 99647 |
+| English     | 2007 | 13403 |
+| English     | 2007 | 16250 |
+| English     | 2007 | 17377 |
+| English     | 2007 | 23934 |
+| English     | 2007 | 37869 |
+| English     | 2007 | 38545 |
+| English     | 2007 | 4355  |
+| English     | 2007 | 4508  |
+| English     | 2007 | 65714 |
+| English     | 2007 | 83170 |
+| English     | 2007 | 83573 |
+| English     | 2007 | 85614 |
+| English     | 2007 | 90448 |
+| English     | 2007 | 91091 |
+| English     | 2007 | 92385 |
+| English     | 2007 | 94990 |
+| English     | 2007 | 96117 |
+| Finance     | 2003 | 18583 |
+| Finance     | 2003 | 21394 |
+| Finance     | 2003 | 28004 |
+| Finance     | 2003 | 37946 |
+| Finance     | 2003 | 40738 |
+| Finance     | 2003 | 52471 |
+| Finance     | 2003 | 55698 |
+| Finance     | 2003 | 58634 |
+| Finance     | 2003 | 71878 |
+| Finance     | 2003 | 80799 |
+| Finance     | 2003 | 83511 |
+| Finance     | 2003 | 93004 |
+| Finance     | 2007 | 15726 |
+| Finance     | 2007 | 18583 |
+| Finance     | 2007 | 2795  |
+| Finance     | 2007 | 28252 |
+| Finance     | 2007 | 37946 |
+| Finance     | 2007 | 41345 |
+| Finance     | 2007 | 46074 |
+| Finance     | 2007 | 5298  |
+| Finance     | 2007 | 65443 |
+| Finance     | 2007 | 66212 |
+| Finance     | 2007 | 9084  |
+| Geology     | 2003 | 10834 |
+| Geology     | 2003 | 13028 |
+| Geology     | 2003 | 14432 |
+| Geology     | 2003 | 15517 |
+| Geology     | 2003 | 16849 |
+| Geology     | 2003 | 28409 |
+| Geology     | 2003 | 43123 |
+| Geology     | 2003 | 56003 |
+| Geology     | 2003 | 57026 |
+| Geology     | 2003 | 57985 |
+| Geology     | 2003 | 58889 |
+| Geology     | 2003 | 61081 |
+| Geology     | 2003 | 64820 |
+| Geology     | 2003 | 65753 |
+| Geology     | 2003 | 6895  |
+| Geology     | 2003 | 760   |
+| Geology     | 2003 | 77234 |
+| Geology     | 2003 | 77244 |
+| Geology     | 2003 | 78767 |
+| Geology     | 2003 | 89132 |
+| Geology     | 2007 | 25725 |
+| Geology     | 2007 | 27094 |
+| Geology     | 2007 | 29390 |
+| Geology     | 2007 | 41599 |
+| Geology     | 2007 | 54620 |
+| Geology     | 2007 | 57026 |
+| Geology     | 2007 | 94324 |
+| Geology     | 2007 | 9933  |
+| History     | 2003 | 14065 |
+| History     | 2003 | 19220 |
+| History     | 2003 | 20489 |
+| History     | 2003 | 20985 |
+| History     | 2003 | 24387 |
+| History     | 2003 | 25187 |
+| History     | 2003 | 26881 |
+| History     | 2003 | 29645 |
+| History     | 2003 | 35    |
+| History     | 2003 | 35220 |
+| History     | 2003 | 39394 |
+| History     | 2003 | 41938 |
+| History     | 2003 | 507   |
+| History     | 2003 | 51008 |
+| History     | 2003 | 55170 |
+| History     | 2003 | 56212 |
+| History     | 2003 | 59848 |
+| History     | 2003 | 63310 |
+| History     | 2003 | 667   |
+| History     | 2003 | 67293 |
+| History     | 2003 | 75560 |
+| History     | 2003 | 76250 |
+| History     | 2003 | 81258 |
+| History     | 2003 | 83002 |
+| History     | 2003 | 92464 |
+| History     | 2003 | 93491 |
+| History     | 2003 | 94766 |
+| History     | 2007 | 16543 |
+| History     | 2007 | 18941 |
+| History     | 2007 | 24746 |
+| History     | 2007 | 29645 |
+| History     | 2007 | 30017 |
+| History     | 2007 | 35685 |
+| History     | 2007 | 3739  |
+| History     | 2007 | 55170 |
+| History     | 2007 | 62487 |
+| History     | 2007 | 68395 |
+| History     | 2007 | 71025 |
+| History     | 2007 | 75560 |
+| History     | 2007 | 78481 |
+| History     | 2007 | 81258 |
+| History     | 2007 | 89051 |
+| History     | 2007 | 89551 |
+| Languages   | 2003 | 13081 |
+| Languages   | 2003 | 22258 |
+| Languages   | 2003 | 28299 |
+| Languages   | 2003 | 35935 |
+| Languages   | 2003 | 41988 |
+| Languages   | 2003 | 51084 |
+| Languages   | 2003 | 53424 |
+| Languages   | 2003 | 63502 |
+| Languages   | 2003 | 67657 |
+| Languages   | 2003 | 75252 |
+| Languages   | 2003 | 8022  |
+| Languages   | 2003 | 80698 |
+| Languages   | 2003 | 94142 |
+| Languages   | 2003 | 94257 |
+| Languages   | 2007 | 11855 |
+| Languages   | 2007 | 23311 |
+| Languages   | 2007 | 24002 |
+| Languages   | 2007 | 282   |
+| Languages   | 2007 | 32368 |
+| Languages   | 2007 | 35935 |
+| Languages   | 2007 | 435   |
+| Languages   | 2007 | 48471 |
+| Languages   | 2007 | 53699 |
+| Languages   | 2007 | 74911 |
+| Languages   | 2007 | 84239 |
+| Languages   | 2007 | 88045 |
+| Languages   | 2007 | 92867 |
+| Languages   | 2007 | 95225 |
+| Languages   | 2007 | 96134 |
+| Languages   | 2007 | 97065 |
+| Marketing   | 2003 | 1232  |
+| Marketing   | 2003 | 16297 |
+| Marketing   | 2003 | 18469 |
+| Marketing   | 2003 | 27140 |
+| Marketing   | 2003 | 38899 |
+| Marketing   | 2003 | 5920  |
+| Marketing   | 2003 | 63645 |
+| Marketing   | 2003 | 65396 |
+| Marketing   | 2003 | 67146 |
+| Marketing   | 2003 | 77898 |
+| Marketing   | 2003 | 79329 |
+| Marketing   | 2003 | 82301 |
+| Marketing   | 2003 | 85356 |
+| Marketing   | 2003 | 86404 |
+| Marketing   | 2003 | 86806 |
+| Marketing   | 2003 | 88302 |
+| Marketing   | 2003 | 93043 |
+| Marketing   | 2003 | 93171 |
+| Marketing   | 2003 | 98940 |
+| Marketing   | 2003 | 99764 |
+| Marketing   | 2007 | 12941 |
+| Marketing   | 2007 | 1812  |
+| Marketing   | 2007 | 18469 |
+| Marketing   | 2007 | 1884  |
+| Marketing   | 2007 | 19541 |
+| Marketing   | 2007 | 30188 |
+| Marketing   | 2007 | 38899 |
+| Marketing   | 2007 | 45083 |
+| Marketing   | 2007 | 56089 |
+| Marketing   | 2007 | 57135 |
+| Marketing   | 2007 | 67146 |
+| Marketing   | 2007 | 74163 |
+| Marketing   | 2007 | 82301 |
+| Marketing   | 2007 | 88302 |
+| Marketing   | 2007 | 93814 |
+| Math        | 2003 | 11202 |
+| Math        | 2003 | 30845 |
+| Math        | 2003 | 32065 |
+| Math        | 2003 | 32483 |
+| Math        | 2003 | 37038 |
+| Math        | 2003 | 40897 |
+| Math        | 2003 | 43993 |
+| Math        | 2003 | 4582  |
+| Math        | 2003 | 52187 |
+| Math        | 2003 | 57156 |
+| Math        | 2003 | 57334 |
+| Math        | 2003 | 61003 |
+| Math        | 2003 | 78782 |
+| Math        | 2003 | 78911 |
+| Math        | 2003 | 79469 |
+| Math        | 2007 | 17086 |
+| Math        | 2007 | 19536 |
+| Math        | 2007 | 21086 |
+| Math        | 2007 | 21395 |
+| Math        | 2007 | 23344 |
+| Math        | 2007 | 32056 |
+| Math        | 2007 | 40897 |
+| Math        | 2007 | 4582  |
+| Math        | 2007 | 51203 |
+| Math        | 2007 | 60040 |
+| Math        | 2007 | 68150 |
+| Math        | 2007 | 78911 |
+| Mech. Eng.  | 2003 | 15030 |
+| Mech. Eng.  | 2003 | 19321 |
+| Mech. Eng.  | 2003 | 28316 |
+| Mech. Eng.  | 2003 | 34422 |
+| Mech. Eng.  | 2003 | 39619 |
+| Mech. Eng.  | 2003 | 40044 |
+| Mech. Eng.  | 2003 | 42843 |
+| Mech. Eng.  | 2003 | 43348 |
+| Mech. Eng.  | 2003 | 58300 |
+| Mech. Eng.  | 2003 | 59553 |
+| Mech. Eng.  | 2003 | 61402 |
+| Mech. Eng.  | 2003 | 67793 |
+| Mech. Eng.  | 2003 | 68516 |
+| Mech. Eng.  | 2003 | 82970 |
+| Mech. Eng.  | 2003 | 87048 |
+| Mech. Eng.  | 2003 | 96968 |
+| Mech. Eng.  | 2007 | 13365 |
+| Mech. Eng.  | 2007 | 18808 |
+| Mech. Eng.  | 2007 | 39619 |
+| Mech. Eng.  | 2007 | 40276 |
+| Mech. Eng.  | 2007 | 46066 |
+| Mech. Eng.  | 2007 | 50537 |
+| Mech. Eng.  | 2007 | 53047 |
+| Mech. Eng.  | 2007 | 65688 |
+| Mech. Eng.  | 2007 | 72768 |
+| Mech. Eng.  | 2007 | 75116 |
+| Mech. Eng.  | 2007 | 81984 |
+| Mech. Eng.  | 2007 | 82591 |
+| Mech. Eng.  | 2007 | 8457  |
+| Mech. Eng.  | 2007 | 85063 |
+| Mech. Eng.  | 2007 | 87048 |
+| Mech. Eng.  | 2007 | 8853  |
+| Mech. Eng.  | 2007 | 94814 |
+| Physics     | 2003 | 10727 |
+| Physics     | 2003 | 19824 |
+| Physics     | 2003 | 28361 |
+| Physics     | 2003 | 30334 |
+| Physics     | 2003 | 37350 |
+| Physics     | 2003 | 41261 |
+| Physics     | 2003 | 42956 |
+| Physics     | 2003 | 463   |
+| Physics     | 2003 | 52120 |
+| Physics     | 2003 | 58595 |
+| Physics     | 2003 | 67436 |
+| Physics     | 2003 | 70828 |
+| Physics     | 2003 | 74530 |
+| Physics     | 2003 | 75878 |
+| Physics     | 2003 | 78637 |
+| Physics     | 2003 | 80610 |
+| Physics     | 2003 | 94998 |
+| Physics     | 2003 | 98120 |
+| Physics     | 2007 | 12711 |
+| Physics     | 2007 | 15083 |
+| Physics     | 2007 | 15457 |
+| Physics     | 2007 | 21552 |
+| Physics     | 2007 | 24197 |
+| Physics     | 2007 | 30858 |
+| Physics     | 2007 | 31266 |
+| Physics     | 2007 | 36265 |
+| Physics     | 2007 | 37101 |
+| Physics     | 2007 | 37350 |
+| Physics     | 2007 | 40371 |
+| Physics     | 2007 | 51817 |
+| Physics     | 2007 | 60224 |
+| Physics     | 2007 | 64192 |
+| Physics     | 2007 | 67017 |
+| Pol. Sci.   | 2003 | 22345 |
+| Pol. Sci.   | 2003 | 24201 |
+| Pol. Sci.   | 2003 | 5399  |
+| Pol. Sci.   | 2003 | 62795 |
+| Pol. Sci.   | 2003 | 68010 |
+| Pol. Sci.   | 2003 | 7656  |
+| Pol. Sci.   | 2003 | 85602 |
+| Pol. Sci.   | 2003 | 86552 |
+| Pol. Sci.   | 2003 | 87785 |
+| Pol. Sci.   | 2003 | 88140 |
+| Pol. Sci.   | 2003 | 90009 |
+| Pol. Sci.   | 2007 | 18234 |
+| Pol. Sci.   | 2007 | 29462 |
+| Pol. Sci.   | 2007 | 38548 |
+| Pol. Sci.   | 2007 | 56486 |
+| Pol. Sci.   | 2007 | 58307 |
+| Pol. Sci.   | 2007 | 61232 |
+| Pol. Sci.   | 2007 | 67725 |
+| Pol. Sci.   | 2007 | 75362 |
+| Pol. Sci.   | 2007 | 77148 |
+| Pol. Sci.   | 2007 | 78454 |
+| Pol. Sci.   | 2007 | 7854  |
+| Pol. Sci.   | 2007 | 88553 |
+| Pol. Sci.   | 2007 | 92949 |
+| Pol. Sci.   | 2007 | 96153 |
+| Pol. Sci.   | 2007 | 99189 |
+| Pol. Sci.   | 2007 | 99711 |
+| Psychology  | 2003 | 17924 |
+| Psychology  | 2003 | 23224 |
+| Psychology  | 2003 | 29920 |
+| Psychology  | 2003 | 33338 |
+| Psychology  | 2003 | 33759 |
+| Psychology  | 2003 | 36494 |
+| Psychology  | 2003 | 48660 |
+| Psychology  | 2003 | 48778 |
+| Psychology  | 2003 | 49214 |
+| Psychology  | 2003 | 61854 |
+| Psychology  | 2003 | 68278 |
+| Psychology  | 2003 | 71628 |
+| Psychology  | 2003 | 73186 |
+| Psychology  | 2003 | 77729 |
+| Psychology  | 2003 | 83039 |
+| Psychology  | 2003 | 83480 |
+| Psychology  | 2003 | 84495 |
+| Psychology  | 2003 | 858   |
+| Psychology  | 2003 | 87831 |
+| Psychology  | 2003 | 90132 |
+| Psychology  | 2007 | 14554 |
+| Psychology  | 2007 | 15698 |
+| Psychology  | 2007 | 17676 |
+| Psychology  | 2007 | 26730 |
+| Psychology  | 2007 | 32886 |
+| Psychology  | 2007 | 47677 |
+| Psychology  | 2007 | 50331 |
+| Psychology  | 2007 | 70572 |
+| Psychology  | 2007 | 78434 |
+| Psychology  | 2007 | 84808 |
+| Psychology  | 2007 | 86833 |
+| Psychology  | 2007 | 92776 |
+| Psychology  | 2007 | 97679 |
+| Statistics  | 2003 | 11083 |
+| Statistics  | 2003 | 15328 |
+| Statistics  | 2003 | 1533  |
+| Statistics  | 2003 | 18636 |
+| Statistics  | 2003 | 22325 |
+| Statistics  | 2003 | 26102 |
+| Statistics  | 2003 | 28538 |
+| Statistics  | 2003 | 35462 |
+| Statistics  | 2003 | 37856 |
+| Statistics  | 2003 | 73165 |
+| Statistics  | 2003 | 74473 |
+| Statistics  | 2003 | 81638 |
+| Statistics  | 2003 | 82082 |
+| Statistics  | 2007 | 17076 |
+| Statistics  | 2007 | 18675 |
+| Statistics  | 2007 | 35462 |
+| Statistics  | 2007 | 4173  |
+| Statistics  | 2007 | 43505 |
+| Statistics  | 2007 | 50039 |
+| Statistics  | 2007 | 56057 |
+| Statistics  | 2007 | 57456 |
+| Statistics  | 2007 | 7956  |
+| Statistics  | 2007 | 82918 |
+| Statistics  | 2007 | 84189 |
+| Statistics  | 2007 | 89188 |
++-------------+------+-------+
+610 rows in set (0.02 sec)
+
+ query 4:
+
+query 6:
+mysql> select i.name,t.course_id from instructor i,teaches t where i.ID=t.ID and i.salary=(select max(s.salary) from instructor s);
++---------+-----------+
+| name    | course_id |
++---------+-----------+
+| Wieland | 545       |
+| Wieland | 581       |
+| Wieland | 591       |
++---------+-----------+
+3 rows in set (0.00 sec)
+
+query 7:
+mysql> select i.dept_name,i.ID,i.salary from instructor i where i.salary in(select min(t.salary) from instructor t group by t.dept_name);
++-------------+-------+-----------+
+| dept_name   | ID    | salary    |
++-------------+-------+-----------+
+| Accounting  | 14365 |  32241.56 |
+| Psychology  | 22591 |  59706.49 |
+| English     | 28097 |  35023.18 |
+| Comp. Sci.  | 3335  |  80797.83 |
+| Marketing   | 36897 |  43770.36 |
+| Athletics   | 41930 |  50482.03 |
+| Elec. Eng.  | 42782 |  34272.67 |
+| Astronomy   | 43779 |  79070.08 |
+| Pol. Sci.   | 48570 |  87549.80 |
+| Physics     | 50330 | 108011.81 |
+| Languages   | 50885 |  32570.50 |
+| Statistics  | 64871 |  45310.53 |
+| Finance     | 6569  | 105311.38 |
+| Cybernetics | 65931 |  79866.95 |
+| Geology     | 77346 |  99382.59 |
+| Biology     | 80759 |  45538.32 |
+| Mech. Eng.  | 97302 |  51647.57 |
++-------------+-------+-----------+
+17 rows in set (0.01 sec)
+
+
+query 12:
+mysql> select i.name,t.course_id from instructor i,teaches t where i.ID=t.ID and i.dept_name="English";
++---------+-----------+
+| name    | course_id |
++---------+-----------+
+| Kean    | 366       |
+| Kean    | 808       |
+| Luo     | 679       |
+| Sakurai | 258       |
+| Sakurai | 270       |
+| Sakurai | 468       |
+| Sakurai | 960       |
++---------+-----------+
+7 rows in set (0.01 sec)
+
+query 13:
+mysql> (select course_id from teaches where semester="Fall" and year="2006") union (select course_id from teaches where semester="Spring" and year="2006");
++-----------+
+| course_id |
++-----------+
+| 867       |
+| 561       |
+| 626       |
+| 362       |
+| 239       |
+| 376       |
+| 959       |
+| 960       |
+| 338       |
+| 352       |
+| 791       |
+| 426       |
+| 864       |
++-----------+
+13 rows in set (0.01 sec)
+
+query 14:
+mysql> select i.name from instructor i,department d where i.dept_name=d.dept_name and d.building="Taylor";
++-----------+
+| name      |
++-----------+
+| Atanassov |
+| Arias     |
+| Romero    |
+| Gutierrez |
+| Pingr     |
+| Choll     |
+| Arinb     |
++-----------+
+7 rows in set (0.00 sec)
+
+query 25:
+mysql> select room_number,building from classroom where capacity=(select MAX(capacity) from classroom );
++-------------+----------+
+| room_number | building |
++-------------+----------+
+| 134         | Whitman  |
++-------------+----------+
+1 row in set (0.00 sec)

@@ -1,0 +1,1260 @@
+mysql> use COMPANY;
+ERROR 1049 (42000): Unknown database 'COMPANY'
+mysql> create database COMPANY;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> use COMPANY;
+Database changed
+CREATE TABLE EMPLOYEE
+( Fname
+VARCHAR(15)
+NOT NULL ,
+Minit
+CHAR ,
+Lname
+VARCHAR(15)
+NOT NULL ,
+Ssn
+CHAR(9)
+NOT NULL ,
+Bdate
+DATE ,
+Address
+VARCHAR(30) ,
+Sex
+CHAR ,
+Salary
+DECIMAL(10 , 2) ,
+Super_ssn
+CHAR(9) ,
+Dno
+INT
+NOT NULL ,
+PRIMARY KEY (Ssn) ,
+FOREIGN KEY (Super_ssn) REFERENCES EMPLOYEE(Ssn) ,
+FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber) ) ;
+CREATE TABLE DEPARTMENT
+( Dname
+VARCHAR(15)
+NOT NULL ,
+Dnumber
+INT
+NOT NULL ,
+Mgr_ssn
+CHAR(9)
+NOT NULL ,
+Mgr_start_date
+DATE ,
+PRIMARY KEY (Dnumber) ,
+UNIQUE (Dname) ,
+FOREIGN KEY (Mgr_ssn) REFERENCES EMPLOYEE(Ssn) ) ;
+mysql> use COMPANY;
+Database changed
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> Terminal close -- exit!
+Aborted
+mysql> use COMPANY;
+Database changed
+mysql> create table Employee(
+    -> FName varchar(20) NOT NULL,
+    -> Minit char,
+    -> LName varchar(20) NOT NULL,
+    -> Ssn char(9) NOT NULL,
+    -> Bdate date,
+    -> Address varchar(30),
+    -> Sex char,
+    -> Salary decimal(10,2),
+    -> Superssn char(9),
+    -> DNo int NOT NULL,
+    -> primary key(Ssn),
+    -> foreign key(Superssn) references Employee(Ssn),
+    -> foreign key(DNo) references Department(DNumber),
+    -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 15
+mysql> create table Employee( FName varchar(20) NOT NULL, Minit char, LName varchar(20) NOT NULL, Ssn char(9) NOT NULL, Bdate date, Address varchar(30), Sex char, Salary decimal(10,2), Superssn char(9), DNo int NOT NULL, primary key(Ssn), foreign key(Superssn) references Employee(Ssn), foreign key(DNo) references Department(DNumber) );
+ERROR 1215 (HY000): Cannot add foreign key constraint
+mysql> use COMPANY;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Employee          |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> create table Department(
+    -> DName varchar(20) NOT NULL,
+    -> DNumber int NOT NULL,
+    -> Mgr_ssn char(9) NOT NULL,
+    -> Mgr_start_date date,
+    -> primary key(DNumber),
+    -> unique(DName),
+    -> foreign key(Mgr_ssn) references Employee(Ssn)
+    -> );
+Query OK, 0 rows affected (0.96 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Employee          |
++-------------------+
+2 rows in set (0.00 sec)
+
+mysql> create table DeptLocations(
+    -> DNumber int NOT NULL,
+    -> DLocation varchar(20) NOT NULL,
+    -> primary key(DNumber,DLocation),
+    -> foreign key(DNumber) references Department (DNumber));
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
++-------------------+
+3 rows in set (0.00 sec)
+
+mysql> create table Project(
+    -> PName varchar(20) NOT NULL,
+    -> PNumber int NOT NULL,
+    -> PLocation varchar(20),
+    -> DNum int NOT NULL,
+    -> primary key(PNumber),
+    -> unique(PName),
+    -> foreign key (DNum) references Department(DNumber));
+Query OK, 0 rows affected (0.33 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
+| Project           |
++-------------------+
+4 rows in set (0.00 sec)
+
+mysql> create table WorksOn(
+    -> Essn char(9) NOT NULL,
+    -> DependentName varchar(20) NOT NULL,
+    -> ^C
+mysql> create table WorksOn(
+    -> Essn char(9) NOT NULL,
+    -> PNo int NOT NULL,
+    -> Hours decimal(3,1) NOT NULL,
+    -> primary key(Essn,PNo),
+    -> foreign key (Essn) references Employee(Ssn),
+    -> foreign key (PNo) references Project(PNumber)); 
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+5 rows in set (0.00 sec)
+
+mysql> create table Dependent(
+    -> Essn char(9) NOT NULL,
+    -> DependentName varchar(20) NOT NULL,
+    -> Sex char,
+    -> Bdate date,
+    -> Relationship varchar(8),
+    -> primary key(Essn,DependentName),
+    -> foreign key(Essn) references Employee(Ssn));
+Query OK, 0 rows affected (0.27 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Dependent         |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+6 rows in set (0.00 sec)
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> alter table Employee add foreign key(DNo) references Department(DNumber);
+Query OK, 0 rows affected (0.73 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   | MUL | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','111111111','5');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`COMPANY`.`Employee`, CONSTRAINT `Employee_ibfk_1` FOREIGN KEY (`Superssn`) REFERENCES `Employee` (`Ssn`))
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','111111111');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> alter table Employee alter column Superssn drop foreign key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'foreign key' at line 1
+mysql> alter table Employee drop column Superssn;
+ERROR 1553 (HY000): Cannot drop index 'Superssn': needed in a foreign key constraint
+mysql> alter table Employee alter column Superssn drop constraint foreign key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'constraint foreign key' at line 1
+mysql> alter table Employee alter column DNo drop constraint foreign key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'constraint foreign key' at line 1
+mysql> alter table Employee drop foreign key Superssn;
+ERROR 1091 (42000): Can't DROP 'Superssn'; check that column/key exists
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   | MUL | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.01 sec)
+
+mysql> alter table Employee drop foreign key Superssn drop key Superssn;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'drop key Superssn' at line 1
+mysql> alter table Employee drop foreign key Superssn drop key Ssn;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'drop key Ssn' at line 1
+mysql> alter table Employee drop foreign key Ssn drop key Superssn;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'drop key Superssn' at line 1
+mysql> alter table Employee drop foreign key Superssn;
+ERROR 1091 (42000): Can't DROP 'Superssn'; check that column/key exists
+mysql> alter table Employee drop foreign key Ssn;
+ERROR 1091 (42000): Can't DROP 'Ssn'; check that column/key exists
+mysql> alter table Employee drop foreign key 'Superssn';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''Superssn'' at line 1
+mysql> alter table Employee drop foreign key 'Ssn';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''Ssn'' at line 1
+mysql> create table Employee(
+    ->     -> FName varchar(20) NOT NULL,
+    ->     -> Minit char,
+    ->     -> LName varchar(20) NOT NULL,
+    ->     -> Ssn char(9) NOT NULL,
+    ->     -> Bdate date,
+    ->     -> Address varchar(30),
+    ->     -> Sex char,
+    ->     -> Salary decimal(10,2),
+    ->     -> Superssn char(9),
+    ->     -> DNo int NOT NULL,
+    ->     -> primary key(Ssn),
+    ->     -> foreign key(Superssn) references Employee(Ssn),
+    ->     -> foreign key(DNo) references Department(DNumber),
+    -> 
+    -> 
+    -> c
+    -> ^C
+mysql> delete COMPANY;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> DELETE DATABASE COMPANY;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DATABASE COMPANY' at line 1
+mysql> drop COMPANY;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'COMPANY' at line 1
+mysql> DROP DATABASE COMPANY;
+Query OK, 6 rows affected (0.92 sec)
+
+
+mysql> use COMPANY;
+Database changed
+mysql> create table Employee(
+    ->     -> FName varchar(20) NOT NULL,
+    ->     -> Minit char,
+    ->     -> LName varchar(20) NOT NULL,
+    ->     -> Ssn char(9) NOT NULL,
+    ->     -> Bdate date,
+    ->     -> Address varchar(30),
+    ->     -> Sex char,
+    ->     -> Salary decimal(10,2),
+    ->     -> Superssn char(9),
+    ->     -> DNo int NOT NULL,
+    ->     -> primary key(Ssn));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-> FName varchar(20) NOT NULL,
+    -> Minit char,
+    -> LName varchar(20) NOT N' at line 2
+mysql> create table Employee(
+    -> FName varchar(20) NOT NULL,
+    -> Minit char,
+    -> LName varchar(20) NOT NULL,
+    ->  Ssn char(9) NOT NULL,
+    ->  Bdate date,
+    -> Address varchar(30),
+    -> Sex char,
+    -> Salary decimal(10,2),
+    -> DNo int NOT NULL,
+    -> primary key(Ssn));
+Query OK, 0 rows affected (0.37 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Employee          |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> create table Department(
+    -> DName varchar(20) NOT NULL,
+    -> DNumber int NOT NULL,
+    -> Mgr_ssn char(9) NOT NULL,
+    -> Mgr_start_date date,
+    -> primary key(DNumber),
+    ->  unique(DName));
+Query OK, 0 rows affected (0.42 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Employee          |
++-------------------+
+2 rows in set (0.00 sec)
+
+mysql> create table DeptLocations(
+    -> DNumber int NOT NULL,
+    ->  DLocation varchar(20) NOT NULL,
+    ->  primary key(DNumber,DLocation));
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
++-------------------+
+3 rows in set (0.00 sec)
+
+mysql> create table Project(
+    -> PName varchar(20) NOT NULL,
+    -> PNumber int NOT NULL,
+    -> PLocation varchar(20),
+    -> DNum int NOT NULL,
+    -> primary key(PNumber),
+    -> unique(PName)
+    -> );
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
+| Project           |
++-------------------+
+4 rows in set (0.00 sec)
+
+mysql> create table WorksOn(
+    -> Essn char(9) NOT NULL,
+    -> PNo int NOT NULL,
+    -> Hours decimal(3,1) NOT NULL,
+    -> primary key(Essn,PNo),
+    -> ^C
+mysql> create table WorksOn(
+    -> Essn char(9) NOT NULL,
+    -> PNo int NOT NULL,
+    -> Hours decimal(3,1) NOT NULL,
+    -> primary key(Essn,PNo));
+Query OK, 0 rows affected (0.27 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+5 rows in set (0.00 sec)
+
+mysql> create table Dependent(
+    -> Essn char(9) NOT NULL,
+    -> DependentName varchar(20) NOT NULL,
+    -> Sex char,
+    -> Bdate date,
+    ->  Relationship varchar(8), primary key(Essn,DependentName)
+    -> );
+Query OK, 0 rows affected (0.26 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Dependent         |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+6 rows in set (0.00 sec)
+
+mysql> desc Employee
+    -> ^C
+mysql> desc Employee;
++---------+---------------+------+-----+---------+-------+
+| Field   | Type          | Null | Key | Default | Extra |
++---------+---------------+------+-----+---------+-------+
+| FName   | varchar(20)   | NO   |     | NULL    |       |
+| Minit   | char(1)       | YES  |     | NULL    |       |
+| LName   | varchar(20)   | NO   |     | NULL    |       |
+| Ssn     | char(9)       | NO   | PRI | NULL    |       |
+| Bdate   | date          | YES  |     | NULL    |       |
+| Address | varchar(30)   | YES  |     | NULL    |       |
+| Sex     | char(1)       | YES  |     | NULL    |       |
+| Salary  | decimal(10,2) | YES  |     | NULL    |       |
+| DNo     | int(11)       | NO   |     | NULL    |       |
++---------+---------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','111111111','5');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> alter table Employee add Superssn char(9);
+Query OK, 0 rows affected (0.44 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| DNo      | int(11)       | NO   |     | NULL    |       |
+| Superssn | char(9)       | YES  |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','111111111','5');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Employee;
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+----------+
+| FName    | Minit | LName   | Ssn       | Bdate      | Address                 | Sex  | Salary   | DNo       | Superssn |
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+----------+
+| ARAVINDH | P     | PARANAN | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN | M    | 70000.00 | 111111111 | 5        |
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> insert into Employee values('VISHAL','P','MAHESWARAN','234567891','1995-12-25','321 ALWARPET,CHENNAI,TN','M','60000','222222222','5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from Employee;
++----------+-------+------------+-----------+------------+-------------------------+------+----------+-----------+----------+
+| FName    | Minit | LName      | Ssn       | Bdate      | Address                 | Sex  | Salary   | DNo       | Superssn |
++----------+-------+------------+-----------+------------+-------------------------+------+----------+-----------+----------+
+| ARAVINDH | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN | M    | 70000.00 | 111111111 | 5        |
+| VISHAL   | P     | MAHESWARAN | 234567891 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN | M    | 60000.00 | 222222222 | 5        |
++----------+-------+------------+-----------+------------+-------------------------+------+----------+-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> insert into Employee values('VINITHA','M','MAHESH','345678912','1998-09-14','453 ADYAR,CHENNAI,TN','F','65000','333333333','4');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Employee values('RAMESH','K','NARAYAN','456789123','1997-04-19','356 TNAGAR,CHENNAI,TN','F','45000','444444444','4');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('SANTHOSH','G','VARUN','567891234','2000-11-15','369 MAMBAKKAM,CHENNAI,TN','M','40000','555555555','5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Employee values('AISHU','V','VENKY','678912345','1992-11-25','789 MOGAPPAIR,CHENNAI,TN','F','30000','666666666','5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Employee values('NAVYA','V','RAKESH','789123456','1996-10-30','975 BESSI,CHENNAI,TN','F','80000','777777777','4');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into Employee values('HARSHITHA','M','REDDY','891234567','1989-11-20','456 KANDIGAI,CHENNAI,TN','F','35000','888888888','1');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> SELECT * FROM Employee;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+----------+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | DNo       | Superssn |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+----------+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 111111111 | 5        |
+| VISHAL    | P     | MAHESWARAN | 234567891 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 222222222 | 5        |
+| VINITHA   | M     | MAHESH     | 345678912 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 333333333 | 4        |
+| RAMESH    | K     | NARAYAN    | 456789123 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 444444444 | 4        |
+| SANTHOSH  | G     | VARUN      | 567891234 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 555555555 | 5        |
+| AISHU     | V     | VENKY      | 678912345 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 666666666 | 5        |
+| NAVYA     | V     | RAKESH     | 789123456 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 777777777 | 4        |
+| HARSHITHA | M     | REDDY      | 891234567 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | 888888888 | 1        |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+----------+
+8 rows in set (0.00 sec)
+
+mysql> alter table Employee change change 'DNo' 'Superssn' char(9);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'change 'DNo' 'Superssn' char(9)' at line 1
+mysql> alter table Employee change  'DNo' 'Superssn' char(9);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''DNo' 'Superssn' char(9)' at line 1
+mysql> alter table Employee change column  'DNo' 'Superssn' char(9);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''DNo' 'Superssn' char(9)' at line 1
+mysql> alter table Employee change column  'DNo' to 'Superssn' char(9);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''DNo' to 'Superssn' char(9)' at line 1
+mysql> alter table Employee change column  'DNo' 'Superssn' char(9);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''DNo' 'Superssn' char(9)' at line 1
+mysql> alter table Employee drop column DNo;
+Query OK, 0 rows affected (0.59 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Employee drop column Superssn;
+Query OK, 0 rows affected (0.55 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Employee add Superssn char(9);
+Query OK, 0 rows affected (0.55 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Employee add DNo int NOT NULL;
+Query OK, 0 rows affected (0.56 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  |     | NULL    |       |
+| DNo      | int(11)       | NO   |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn | DNo |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | NULL     |   0 |
+| VISHAL    | P     | MAHESWARAN | 234567891 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | NULL     |   0 |
+| VINITHA   | M     | MAHESH     | 345678912 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | NULL     |   0 |
+| RAMESH    | K     | NARAYAN    | 456789123 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | NULL     |   0 |
+| SANTHOSH  | G     | VARUN      | 567891234 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | NULL     |   0 |
+| AISHU     | V     | VENKY      | 678912345 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | NULL     |   0 |
+| NAVYA     | V     | RAKESH     | 789123456 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | NULL     |   0 |
+| HARSHITHA | M     | REDDY      | 891234567 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | NULL     |   0 |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+----------+-----+
+8 rows in set (0.00 sec)
+
+mysql> drop table Employee;
+Query OK, 0 rows affected (0.15 sec)
+
+mysql> create table Employee(
+    -> FName varchar(20) NOT NULL,
+    -> Minit char,
+    -> LName varchar(20) NOT NULL,
+    ->  Ssn char(9) NOT NULL,
+    -> Bdate date,
+    -> Address varchar(30),
+    -> Sex char,
+    -> Salary decimal(10,2),
+    -> Superssn char(9),
+    -> DNo int NOT NULL,
+    -> primary key(Ssn));
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Dependent         |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','111111111','5');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('VISHAL','P','MAHESWARAN','234567891','1995-12-25','321 ALWARPET,CHENNAI,TN','M','60000','222222222','5');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('VINITHA','M','MAHESH','345678912','1998-09-14','453 ADYAR,CHENNAI,TN','F','65000','333333333','4');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('RAMESH','K','NARAYAN','456789123','1997-04-19','356 TNAGAR,CHENNAI,TN','F','45000','444444444','4');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('SANTHOSH','G','VARUN','567891234','2000-11-15','369 MAMBAKKAM,CHENNAI,TN','M','40000','555555555','5');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Employee values('AISHU','V','VENKY','678912345','1992-11-25','789 MOGAPPAIR,CHENNAI,TN','F','30000','666666666','5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Employee values('NAVYA','V','RAKESH','789123456','1996-10-30','975 BESSI,CHENNAI,TN','F','80000','777777777','4');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Employee values('HARSHITHA','M','REDDY','891234567','1989-11-20','456 KANDIGAI,CHENNAI,TN','F','35000','888888888','1');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 111111111 |   5 |
+| VISHAL    | P     | MAHESWARAN | 234567891 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 222222222 |   5 |
+| VINITHA   | M     | MAHESH     | 345678912 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 333333333 |   4 |
+| RAMESH    | K     | NARAYAN    | 456789123 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 444444444 |   4 |
+| SANTHOSH  | G     | VARUN      | 567891234 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 555555555 |   5 |
+| AISHU     | V     | VENKY      | 678912345 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 666666666 |   5 |
+| NAVYA     | V     | RAKESH     | 789123456 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 777777777 |   4 |
+| HARSHITHA | M     | REDDY      | 891234567 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | 888888888 |   1 |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+8 rows in set (0.00 sec)
+
+mysql> alter table Employee add foreign key(Superssn) references Employee(Ssn);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`COMPANY`.`#sql-401_9`, CONSTRAINT `#sql-401_9_ibfk_1` FOREIGN KEY (`Superssn`) REFERENCES `Employee` (`Ssn`))
+mysql> use COMPANY;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> delete table Employee;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table Employee' at line 1
+mysql> delete from Employee;
+Query OK, 8 rows affected (0.20 sec)
+
+mysql> select * from Employee;
+Empty set (0.00 sec)
+
+mysql> insert into Employee values('ARAVINDH','P','PARANAN','123456789','1997-09-17','123 MYLAPORE,CHENNAI,TN','M','70000','333445555','5');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into Employee values('VISHAL','P','MAHESWARAN','333445555','1995-12-25','321 ALWARPET,CHENNAI,TN','M','60000','888665555','5');
+Query OK, 1 row affected (0.46 sec)
+
+mysql> insert into Employee values('VINITHA','M','MAHESH','999887777','1998-09-14','453 ADYAR,CHENNAI,TN','F','65000','987654321','4');
+Query OK, 1 row affected (0.44 sec)
+
+mysql> insert into Employee values('RAMESH','K','NARAYAN','987654321','1997-04-19','356 TNAGAR,CHENNAI,TN','F','45000','888665555','4');
+Query OK, 1 row affected (0.44 sec)
+
+mysql> insert into Employee values('SANTHOSH','G','VARUN','666884444','2000-11-15','369 MAMBAKKAM,CHENNAI,TN','M','40000','333445555','5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Employee values('AISHU','V','VENKY','453453453','1992-11-25','789 MOGAPPAIR,CHENNAI,TN','F','30000','333445555','5');
+Query OK, 1 row affected (0.46 sec)
+
+mysql> insert into Employee values('NAVYA','V','RAKESH','987987987','1996-10-30','975 BESSI,CHENNAI,TN','F','80000','987654321','4');
+Query OK, 1 row affected (0.45 sec)
+
+mysql> insert into Employee values('HARSHITHA','M','REDDY','888665555','1989-11-20','456 KANDIGAI,CHENNAI,TN','F','35000',' ','1');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 333445555 |   5 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 888665555 |   5 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 333445555 |   5 |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 333445555 |   5 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 |           |   1 |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 888665555 |   4 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 987654321 |   4 |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 987654321 |   4 |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+8 rows in set (0.01 sec)
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  |     | NULL    |       |
+| DNo      | int(11)       | NO   |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> delete from table where FName='HARSHITHA';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table where FName='HARSHITHA'' at line 1
+mysql> delete from Employee where FName='HARSHITHA';
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Employee;
++----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| FName    | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo |
++----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| ARAVINDH | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 333445555 |   5 |
+| VISHAL   | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 888665555 |   5 |
+| AISHU    | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 333445555 |   5 |
+| SANTHOSH | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 333445555 |   5 |
+| RAMESH   | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 888665555 |   4 |
+| NAVYA    | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 987654321 |   4 |
+| VINITHA  | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 987654321 |   4 |
++----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+7 rows in set (0.00 sec)
+
+mysql> insert into Employee values('HARSHITHA','M','REDDY','888665555','1989-11-20','456 KANDIGAI,CHENNAI,TN','F','35000','NULL','1');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 333445555 |   5 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 888665555 |   5 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 333445555 |   5 |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 333445555 |   5 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | NULL      |   1 |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 888665555 |   4 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 987654321 |   4 |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 987654321 |   4 |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+
+8 rows in set (0.00 sec)
+
+mysql> insert into Employee values('VINANTHI','S','REDDY','234567891','1998-06-02','389 SAIDAPET,CHENNAI,TN','F','85000','888665555','5');
+Query OK, 1 row affected (0.46 sec)
+
+mysql> insert into Employee values('PRIYA','R','DHARSHINI','345678912','1998-09-01','654 ROYAPETTAH,CHENNAI,TN','F','75000','987654321','4');
+Query OK, 1 row affected (0.35 sec)
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | NULL      |   1 |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+10 rows in set (0.00 sec)
+
+mysql> alter table Employee add foreign key(Superssn) references Employee(Ssn);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`COMPANY`.`#sql-3f2_5`, CONSTRAINT `#sql-3f2_5_ibfk_1` FOREIGN KEY (`Superssn`) REFERENCES `Employee` (`Ssn`))
+mysql> update Employee set Superssn='333445555' where FName='HARSHITHA';
+Query OK, 1 row affected (0.35 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Employee;
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | 333445555 |   1 |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+
+10 rows in set (0.00 sec)
+
+mysql> alter table Employee add foreign key(Superssn) references Employee(Ssn);
+Query OK, 10 rows affected (0.88 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> insert into Department values('RESEARCH','5','333445555','2005-05-22');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> insert into Department values('ADMINISTRATION','4','987654321','2007-04-01');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> insert into Department values('HEADQUARTERS','1','888665555','2004-09-15');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> SELECT * FROM Department;
++----------------+---------+-----------+----------------+
+| DName          | DNumber | Mgr_ssn   | Mgr_start_date |
++----------------+---------+-----------+----------------+
+| HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| RESEARCH       |       5 | 333445555 | 2005-05-22     |
++----------------+---------+-----------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> alter table Employee add foreign key(DNo) references Employee(Dnumber);
+ERROR 1215 (HY000): Cannot add foreign key constraint
+mysql> alter table Employee add foreign key(DNo) references Department(Dnumber);
+Query OK, 10 rows affected (0.80 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> alter table Department add foreign key(MgrSsn) references Employee(Ssn);
+ERROR 1072 (42000): Key column 'MgrSsn' doesn't exist in table
+mysql> alter table Department add foreign key(Mgrssn) references Employee(Ssn);
+ERROR 1072 (42000): Key column 'Mgrssn' doesn't exist in table
+mysql> alter table Department add foreign key(Mgr_ssn) references Employee(Ssn);
+Query OK, 3 rows affected (0.96 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   | MUL | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> desc Department;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| DName          | varchar(20) | NO   | UNI | NULL    |       |
+| DNumber        | int(11)     | NO   | PRI | NULL    |       |
+| Mgr_ssn        | char(9)     | NO   | MUL | NULL    |       |
+| Mgr_start_date | date        | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Dependent         |
+| DeptLocations     |
+| Employee          |
+| Project           |
+| WorksOn           |
++-------------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into DeptLocations values('1','CHENNAI');
+Query OK, 1 row affected (0.52 sec)
+
+mysql> insert into DeptLocations values('4','CHENNAI');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into DeptLocations values('5','CHENNAI');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into DeptLocations values('4','TRICHY');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into DeptLocations values('5','KODAI');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> alter table DeptLocations add foreign key(Dnumber) references Department(Dnumber);
+Query OK, 5 rows affected (0.98 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> desc DeptLocations;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| DNumber   | int(11)     | NO   | PRI | NULL    |       |
+| DLocation | varchar(20) | NO   | PRI | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> select * from DeptLocations;
++---------+-----------+
+| DNumber | DLocation |
++---------+-----------+
+|       1 | CHENNAI   |
+|       4 | CHENNAI   |
+|       4 | TRICHY    |
+|       5 | CHENNAI   |
+|       5 | KODAI     |
++---------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> insert into WorksOn values('123456789','1','32.5');
+Query OK, 1 row affected (0.33 sec)
+
+mysql> insert into WorksOn values('234567891','2','6.5');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into WorksOn values('333445555','3','40.0');
+Query OK, 1 row affected (0.37 sec)
+
+mysql> insert into WorksOn values('345678912','1','20.0');
+Query OK, 1 row affected (0.33 sec)
+
+mysql> insert into WorksOn values('453453453','2','20.0');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into WorksOn values('666884444','2','10.0');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> insert into WorksOn values('888665555','3','10.0');
+Query OK, 1 row affected (0.32 sec)
+
+mysql> insert into WorksOn values('987654321','10','30.0');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into WorksOn values('987987987','20','25.0');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into WorksOn values('999887777','20','15.0');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from WorksOn;
++-----------+-----+-------+
+| Essn      | PNo | Hours |
++-----------+-----+-------+
+| 123456789 |   1 |  32.5 |
+| 234567891 |   2 |   6.5 |
+| 333445555 |   3 |  40.0 |
+| 345678912 |   1 |  20.0 |
+| 453453453 |   2 |  20.0 |
+| 666884444 |   2 |  10.0 |
+| 888665555 |   3 |  10.0 |
+| 987654321 |  10 |  30.0 |
+| 987987987 |  20 |  25.0 |
+| 999887777 |  20 |  15.0 |
++-----------+-----+-------+
+10 rows in set (0.00 sec)
+
+mysql> insert into Project values('PRODUCTX','1','CHENNAI','5');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Project values('PRODUCTY','2','CHENNAI','4');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> insert into Project values('PRODUCTZ','3','CHENNAI','1');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into Project values('COMPUTERIZATION','10','TRICHY','4');
+Query OK, 1 row affected (0.32 sec)
+
+mysql> insert into Project values('REORGANIZATION','20','KODAI','5');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> select * from Project;
++-----------------+---------+-----------+------+
+| PName           | PNumber | PLocation | DNum |
++-----------------+---------+-----------+------+
+| PRODUCTX        |       1 | CHENNAI   |    5 |
+| PRODUCTY        |       2 | CHENNAI   |    4 |
+| PRODUCTZ        |       3 | CHENNAI   |    1 |
+| COMPUTERIZATION |      10 | TRICHY    |    4 |
+| REORGANIZATION  |      20 | KODAI     |    5 |
++-----------------+---------+-----------+------+
+5 rows in set (0.00 sec)
+
+mysql> alter table Project add foreign key(DNum) references Department(Dnumber);
+Query OK, 5 rows affected (0.94 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> desc Project;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| PName     | varchar(20) | NO   | UNI | NULL    |       |
+| PNumber   | int(11)     | NO   | PRI | NULL    |       |
+| PLocation | varchar(20) | YES  |     | NULL    |       |
+| DNum      | int(11)     | NO   | MUL | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> alter table WorksOn add foreign key(Essn) references Employee(Ssn);
+Query OK, 10 rows affected (0.71 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> alter table WorksOn add foreign key(PNo) references Project(PNumber);
+Query OK, 10 rows affected (0.84 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> desc WorksOn;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| Essn  | char(9)      | NO   | PRI | NULL    |       |
+| PNo   | int(11)      | NO   | PRI | NULL    |       |
+| Hours | decimal(3,1) | NO   |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into Dependent values('333445555','ANITA','F','2007-04-05');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into Dependent values('333445555','ANITA','F','2007-04-05','DAUGHTER');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Dependent values('333445555','MANISH','M','2006-09-07','SON');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Dependent values('333445555','JANE','F','1998-05-06','SPOUSE');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into Dependent values('987654321','ABNER','M','1995-11-16','SPOUSE');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Dependent values('123456789','MIKE','M','2005-12-19','SON');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into Dependent values('123456789','SANJU','F','2009-01-01','DAUGHTER');
+Query OK, 1 row affected (0.44 sec)
+
+mysql> insert into Dependent values('123456789','YUVI','M','2011-12-01',SON');
+    '> ^C
+mysql> insert into Dependent values('123456789','YUVI','M','2011-12-01','SON');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> SELECT * FROM Dependent;
++-----------+---------------+------+------------+--------------+
+| Essn      | DependentName | Sex  | Bdate      | Relationship |
++-----------+---------------+------+------------+--------------+
+| 123456789 | MIKE          | M    | 2005-12-19 | SON          |
+| 123456789 | SANJU         | F    | 2009-01-01 | DAUGHTER     |
+| 123456789 | YUVI          | M    | 2011-12-01 | SON          |
+| 333445555 | ANITA         | F    | 2007-04-05 | DAUGHTER     |
+| 333445555 | JANE          | F    | 1998-05-06 | SPOUSE       |
+| 333445555 | MANISH        | M    | 2006-09-07 | SON          |
+| 987654321 | ABNER         | M    | 1995-11-16 | SPOUSE       |
++-----------+---------------+------+------------+--------------+
+7 rows in set (0.00 sec)
+
+mysql> alter table Dependent add foreign key(Essn) references Employee(Ssn);
+Query OK, 7 rows affected (2.25 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> desc Dependent;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| Essn          | char(9)     | NO   | PRI | NULL    |       |
+| DependentName | varchar(20) | NO   | PRI | NULL    |       |
+| Sex           | char(1)     | YES  |     | NULL    |       |
+| Bdate         | date        | YES  |     | NULL    |       |
+| Relationship  | varchar(8)  | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select Bdate,Address from Employee where FName='VINANTHI' and Minit='S' and LName='REDDY';
++------------+-------------------------+
+| Bdate      | Address                 |
++------------+-------------------------+
+| 1998-06-02 | 389 SAIDAPET,CHENNAI,TN |
++------------+-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select FName,LName,Address from Employee,Department where DName='RESEARCH' and Dnumber=DNo;
++----------+------------+--------------------------+
+| FName    | LName      | Address                  |
++----------+------------+--------------------------+
+| ARAVINDH | PARANAN    | 123 MYLAPORE,CHENNAI,TN  |
+| VINANTHI | REDDY      | 389 SAIDAPET,CHENNAI,TN  |
+| VISHAL   | MAHESWARAN | 321 ALWARPET,CHENNAI,TN  |
+| AISHU    | VENKY      | 789 MOGAPPAIR,CHENNAI,TN |
+| SANTHOSH | VARUN      | 369 MAMBAKKAM,CHENNAI,TN |
++----------+------------+--------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select PNumber,DNum,LName,Address,Bdate from Project,Department,Employee where DNum=Dnumber and Mgr_ssn=Ssn and PLocation='CHENNAI';
++---------+------+------------+-------------------------+------------+
+| PNumber | DNum | LName      | Address                 | Bdate      |
++---------+------+------------+-------------------------+------------+
+|       1 |    5 | MAHESWARAN | 321 ALWARPET,CHENNAI,TN | 1995-12-25 |
+|       2 |    4 | NARAYAN    | 356 TNAGAR,CHENNAI,TN   | 1997-04-19 |
+|       3 |    1 | REDDY      | 456 KANDIGAI,CHENNAI,TN | 1989-11-20 |
++---------+------+------------+-------------------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select E.FName,E.LName,S.FName,S.LName from Employee as E,Employee as S where E.SuperSsn=S.Ssn;
++-----------+------------+-----------+------------+
+| FName     | LName      | FName     | LName      |
++-----------+------------+-----------+------------+
+| ARAVINDH  | PARANAN    | VISHAL    | MAHESWARAN |
+| VINANTHI  | REDDY      | HARSHITHA | REDDY      |
+| VISHAL    | MAHESWARAN | HARSHITHA | REDDY      |
+| PRIYA     | DHARSHINI  | RAMESH    | NARAYAN    |
+| AISHU     | VENKY      | VISHAL    | MAHESWARAN |
+| SANTHOSH  | VARUN      | VISHAL    | MAHESWARAN |
+| HARSHITHA | REDDY      | VISHAL    | MAHESWARAN |
+| RAMESH    | NARAYAN    | HARSHITHA | REDDY      |
+| NAVYA     | RAKESH     | RAMESH    | NARAYAN    |
+| VINITHA   | MAHESH     | RAMESH    | NARAYAN    |
++-----------+------------+-----------+------------+
+10 rows in set (0.00 sec)
+
+mysql> select Ssn from Employee;
++-----------+
+| Ssn       |
++-----------+
+| 888665555 |
+| 345678912 |
+| 987654321 |
+| 987987987 |
+| 999887777 |
+| 123456789 |
+| 234567891 |
+| 333445555 |
+| 453453453 |
+| 666884444 |
++-----------+
+10 rows in set (0.00 sec)
+
+mysql> select Ssn,DName from Employee,Department;
++-----------+----------------+
+| Ssn       | DName          |
++-----------+----------------+
+| 888665555 | ADMINISTRATION |
+| 888665555 | HEADQUARTERS   |
+| 888665555 | RESEARCH       |
+| 345678912 | ADMINISTRATION |
+| 345678912 | HEADQUARTERS   |
+| 345678912 | RESEARCH       |
+| 987654321 | ADMINISTRATION |
+| 987654321 | HEADQUARTERS   |
+| 987654321 | RESEARCH       |
+| 987987987 | ADMINISTRATION |
+| 987987987 | HEADQUARTERS   |
+| 987987987 | RESEARCH       |
+| 999887777 | ADMINISTRATION |
+| 999887777 | HEADQUARTERS   |
+| 999887777 | RESEARCH       |
+| 123456789 | ADMINISTRATION |
+| 123456789 | HEADQUARTERS   |
+| 123456789 | RESEARCH       |
+| 234567891 | ADMINISTRATION |
+| 234567891 | HEADQUARTERS   |
+| 234567891 | RESEARCH       |
+| 333445555 | ADMINISTRATION |
+| 333445555 | HEADQUARTERS   |
+| 333445555 | RESEARCH       |
+| 453453453 | ADMINISTRATION |
+| 453453453 | HEADQUARTERS   |
+| 453453453 | RESEARCH       |
+| 666884444 | ADMINISTRATION |
+| 666884444 | HEADQUARTERS   |
+| 666884444 | RESEARCH       |
++-----------+----------------+
+30 rows in set (0.00 sec)
+
+mysql> select * from Employee,Department;
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+----------------+---------+-----------+----------------+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | DName          | DNumber | Mgr_ssn   | Mgr_start_date |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+----------------+---------+-----------+----------------+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | 333445555 |   1 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | 333445555 |   1 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | 333445555 |   1 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 | HEADQUARTERS   |       1 | 888665555 | 2004-09-15     |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 | ADMINISTRATION |       4 | 987654321 | 2007-04-01     |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 | RESEARCH       |       5 | 333445555 | 2005-05-22     |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+----------------+---------+-----------+----------------+
+30 rows in set (0.00 sec)
+

@@ -1,0 +1,586 @@
+//QUERY 1
+
+mysql> select * from employee where MOD(Sno,2)=1;
++----------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+
+| Fname    | Minit | Lname        | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Dno | Sno  |
++----------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+
+| Abishek  | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram       | M    | 10000.00 | 112       |   1 |    1 |
+| Aarthi   | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram       | F    | 11000.00 | 111       |   1 |    3 |
+| Aravind  | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar       | M    | 11000.00 | 213       |   2 |    5 |
+| Rahul    | B     | Jain         | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |   3 |    7 |
+| Nivedita |       | Mahesh       | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |   3 |    9 |
+| Preetika |       | Kumar        | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   3 |   11 |
++----------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+
+6 rows in set (0.01 sec)
+
+
+//QUERY 2
+
+mysql> select * from employee where MOD(Sno,2)=0;
++------------+-------+----------+-----+------------+------------------------------+------+----------+-----------+-----+------+
+| Fname      | Minit | Lname    | Ssn | Bdate      | Address                      | Sex  | Salary   | Super_ssn | Dno | Sno  |
++------------+-------+----------+-----+------------+------------------------------+------+----------+-----------+-----+------+
+| Akshita    | S     | Sridhar  | 112 | 1998-08-08 | #143 Uday St West Tambaram   | F    | 12000.00 | 113       |   1 |    2 |
+| Madhumitha | P     | Murali   | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar | F    | 10000.00 | 212       |   2 |    4 |
+| Ram        | N     | Raghav   | 213 | 1998-11-12 | #177 Gajendra St Guindy      | M    | 12000.00 | 211       |   2 |    6 |
+| Ashwen     |       | Barathan | 312 | 1996-09-04 | #12 Prestige Downtown        | M    | 13000.00 | 313       |   3 |    8 |
+| Sujana     |       | Ramesh   | 314 | 1996-02-03 | #218 Sowcarpet               | F    | 13000.00 | 311       |   3 |   10 |
++------------+-------+----------+-----+------------+------------------------------+------+----------+-----------+-----+------+
+5 rows in set (0.00 sec)
+
+
+//QUERY 3
+
+mysql> select YEAR(Bdate)'Year of Birth' from employee;
++---------------+
+| Year of Birth |
++---------------+
+|          1998 |
+|          1998 |
+|          1998 |
+|          1998 |
+|          1998 |
+|          1998 |
+|          1998 |
+|          1996 |
+|          1997 |
+|          1996 |
+|          1997 |
++---------------+
+11 rows in set (0.00 sec)
+
+//QUERY 4
+
+mysql> select SUBSTRING(Birthdate,1,4)'Year' from employee;
++------+
+| Year |
++------+
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1996 |
+| 1997 |
+| 1996 |
+| 1997 |
++------+
+11 rows in set (0.00 sec)
+
+
+//QUERY 5
+
+mysql> select SUBSTRING(Fname,1,3)'3 Char' from employee;
++--------+
+| 3 Char |
++--------+
+| Abi    |
+| Aks    |
+| Aar    |
+| Mad    |
+| Ara    |
+| Ram    |
+| Rah    |
+| Ash    |
+| Niv    |
+| Suj    |
+| Pre    |
++--------+
+11 rows in set (0.00 sec)
+
+//QUERY 7
+
+mysql> select Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate,count(*)'No of Times Duplicated' from employee group by Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate having count(*)>=2;
++--------+-------+----------+-----+------------+-----------------------+------+----------+-----------+-----+------------+------------------------+
+| Fname  | Minit | Lname    | Ssn | Bdate      | Address               | Sex  | Salary   | Super_ssn | Dno | Birthdate  | No of Times Duplicated |
++--------+-------+----------+-----+------------+-----------------------+------+----------+-----------+-----+------------+------------------------+
+| Ashwen |       | Barathan | 312 | 1996-09-04 | #12 Prestige Downtown | M    | 13000.00 | 313       |   3 | 1996-09-04 |                      2 |
++--------+-------+----------+-----+------------+-----------------------+------+----------+-----------+-----+------------+------------------------+
+1 row in set (0.00 sec)
+
+//QUERY 8
+
+mysql> delete from employee_dup where Sno in(select Sno from employee where Fname in(select Fname from employee group by Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate having count(*)>=2)) and Sno!=(select Max(Sno) from employee where Fname in(select Fname from employee group by Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate having count(*)>=2));
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select * from employee_dup;
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Fname      | Minit | Lname        | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Dno | Sno  | Birthdate  |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Abishek    | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram       | M    | 10000.00 | 112       |   1 |    1 | 1998-01-10 |
+| Akshita    | S     | Sridhar      | 112 | 1998-08-08 | #143 Uday St West Tambaram    | F    | 12000.00 | 113       |   1 |    2 | 1998-08-08 |
+| Aarthi     | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram       | F    | 11000.00 | 111       |   1 |    3 | 1998-04-03 |
+| Madhumitha | P     | Murali       | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar  | F    | 10000.00 | 212       |   2 |    4 | 1998-07-02 |
+| Aravind    | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar       | M    | 11000.00 | 213       |   2 |    5 | 1998-10-02 |
+| Ram        | N     | Raghav       | 213 | 1998-11-12 | #177 Gajendra St Guindy       | M    | 12000.00 | 211       |   2 |    6 | 1998-11-12 |
+| Rahul      | B     | Jain         | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |   3 |    7 | 1998-12-12 |
+| Nivedita   |       | Mahesh       | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |   3 |    9 | 1997-08-04 |
+| Sujana     |       | Ramesh       | 314 | 1996-02-03 | #218 Sowcarpet                | F    | 13000.00 | 311       |   3 |   10 | 1996-02-03 |
+| Preetika   |       | Kumar        | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   3 |   11 | 1997-09-10 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |   12 | 1996-09-04 |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+11 rows in set (0.00 sec)
+
+mysql> select * from employee;
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Fname      | Minit | Lname        | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Dno | Sno  | Birthdate  |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Abishek    | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram       | M    | 10000.00 | 112       |   1 |    1 | 1998-01-10 |
+| Akshita    | S     | Sridhar      | 112 | 1998-08-08 | #143 Uday St West Tambaram    | F    | 12000.00 | 113       |   1 |    2 | 1998-08-08 |
+| Aarthi     | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram       | F    | 11000.00 | 111       |   1 |    3 | 1998-04-03 |
+| Madhumitha | P     | Murali       | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar  | F    | 10000.00 | 212       |   2 |    4 | 1998-07-02 |
+| Aravind    | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar       | M    | 11000.00 | 213       |   2 |    5 | 1998-10-02 |
+| Ram        | N     | Raghav       | 213 | 1998-11-12 | #177 Gajendra St Guindy       | M    | 12000.00 | 211       |   2 |    6 | 1998-11-12 |
+| Rahul      | B     | Jain         | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |   3 |    7 | 1998-12-12 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |    8 | 1996-09-04 |
+| Nivedita   |       | Mahesh       | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |   3 |    9 | 1997-08-04 |
+| Sujana     |       | Ramesh       | 314 | 1996-02-03 | #218 Sowcarpet                | F    | 13000.00 | 311       |   3 |   10 | 1996-02-03 |
+| Preetika   |       | Kumar        | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   3 |   11 | 1997-09-10 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |   12 | 1996-09-04 |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+12 rows in set (0.00 sec)
+
+
+//QUERY 10
+
+mysql> select distinct x.Salary from employee as x where (select count(distinct(Salary)) from employee as y where x.Salary<y.Salary)=2;
++----------+
+| Salary   |
++----------+
+| 13000.00 |
++----------+
+1 row in set (0.01 sec)
+
+
+//QUERY 11
+
+mysql> select distinct Salary from employee order by Salary asc LIMIT 3;
++----------+
+| Salary   |
++----------+
+| 10000.00 |
+| 11000.00 |
+| 12000.00 |
++----------+
+3 rows in set (0.00 sec)
+
+//QUERY 13
+
+mysql> select year(Bdate),month(Bdate),date(Bdate) from employee;
++-------------+--------------+-------------+
+| year(Bdate) | month(Bdate) | date(Bdate) |
++-------------+--------------+-------------+
+|        1998 |            1 | 1998-01-10  |
+|        1998 |            8 | 1998-08-08  |
+|        1998 |            4 | 1998-04-03  |
+|        1998 |            7 | 1998-07-02  |
+|        1998 |           10 | 1998-10-02  |
+|        1998 |           11 | 1998-11-12  |
+|        1998 |           12 | 1998-12-12  |
+|        1996 |            9 | 1996-09-04  |
+|        1997 |            8 | 1997-08-04  |
+|        1996 |            2 | 1996-02-03  |
+|        1997 |            9 | 1997-09-10  |
+|        1996 |            9 | 1996-09-04  |
++-------------+--------------+-------------+
+12 rows in set (0.03 sec)
+
+//QUERY 14
+
+mysql> select CURRENT_DATE;
++--------------+
+| CURRENT_DATE |
++--------------+
+| 2018-04-02   |
++--------------+
+1 row in set (0.00 sec)
+
+//QUERY 15
+
+mysql> select day(Bdate) from employee;
++------------+
+| day(Bdate) |
++------------+
+|         10 |
+|          8 |
+|          3 |
+|          2 |
+|          2 |
+|         12 |
+|         12 |
+|          4 |
+|          4 |
+|          3 |
+|         10 |
+|          4 |
++------------+
+12 rows in set (0.00 sec)
+
+//QUERY 16
+
+mysql> select day(Bdate)+1 from employee;
++--------------+
+| day(Bdate)+1 |
++--------------+
+|           11 |
+|            9 |
+|            4 |
+|            3 |
+|            3 |
+|           13 |
+|           13 |
+|            5 |
+|            5 |
+|            4 |
+|           11 |
+|            5 |
++--------------+
+12 rows in set (0.00 sec)
+
+//QUERY 17
+
+mysql> select distinct Position('a' in 'Sundar Pichai') from employee;
++----------------------------------+
+| Position('a' in 'Sundar Pichai') |
++----------------------------------+
+|                                5 |
++----------------------------------+
+1 row in set (0.00 sec)
+
+
+//QUERY 18
+
+mysql> select ltrim(Fname) from employee;
++--------------+
+| ltrim(Fname) |
++--------------+
+| Abishek      |
+| Akshita      |
+| Aarthi       |
+| Madhumitha   |
+| Aravind      |
+| Ram          |
+| Rahul        |
+| Ashwen       |
+| Nivedita     |
+| Sujana       |
+| Preetika     |
+| Ashwen       |
++--------------+
+12 rows in set (0.00 sec)
+
+//QUERY 19
+
+mysql> select length(Fname) from employee;
++---------------+
+| length(Fname) |
++---------------+
+|             7 |
+|             7 |
+|             6 |
+|            10 |
+|             7 |
+|             3 |
+|             5 |
+|             6 |
+|             8 |
+|             6 |
+|             8 |
+|             6 |
++---------------+
+12 rows in set (0.00 sec)
+
+//QUERY 20
+
+mysql> select Replace(Fname,'i','*') from employee;
++------------------------+
+| Replace(Fname,'i','*') |
++------------------------+
+| Ab*shek                |
+| Aksh*ta                |
+| Aarth*                 |
+| Madhum*tha             |
+| Arav*nd                |
+| Ram                    |
+| Rahul                  |
+| Ashwen                 |
+| N*ved*ta               |
+| Sujana                 |
+| Preet*ka               |
+| Ashwen                 |
++------------------------+
+12 rows in set (0.00 sec)
+
+
+//QUERY 21
+
+mysql> select concat(Fname,'-',Lname) from employee;
++-------------------------+
+| concat(Fname,'-',Lname) |
++-------------------------+
+| Abishek-Arora           |
+| Akshita-Sridhar         |
+| Aarthi-Ravichandran     |
+| Madhumitha-Murali       |
+| Aravind-Jayaraman       |
+| Ram-Raghav              |
+| Rahul-Jain              |
+| Ashwen-Barathan         |
+| Nivedita-Mahesh         |
+| Sujana-Ramesh           |
+| Preetika-Kumar          |
+| Ashwen-Barathan         |
++-------------------------+
+12 rows in set (0.00 sec)
+
+//QUERY 22
+
+mysql> select Fname from employee where position('Ra' in Fname)!=0;
++---------+
+| Fname   |
++---------+
+| Aravind |
+| Ram     |
+| Rahul   |
++---------+
+3 rows in set (0.01 sec)
+
+//QUERY 23
+
+mysql> select Sex,count(*) from employee where Bdate>'1995-01-01' and Bdate<'1997-03-04' group by Sex;
++------+----------+
+| Sex  | count(*) |
++------+----------+
+| F    |        1 |
+| M    |        2 |
++------+----------+
+2 rows in set (0.00 sec)
+
+//QUERY 25
+
+mysql> select Fname from employee where (length(Fname)-length(replace(Fname,' ','')))>=2;
+Empty set (0.00 sec)
+
+//QUERY 26
+
+mysql> select * from employee where Fname like '%n'and length(Lname)=4;
+Empty set (0.01 sec)
+
+//QUERY 27
+
+mysql> select * from employee inner join department on employee.Dno=department.Dno where month(Mgr_start_date)=1 and Ssn=Mgr_ssn;
++-------+----------+-----+------------+-----------+-----------------------+------+----------+-----------+-----+------------+-----+---------+----------------+
+| Minit | Lname    | Ssn | Bdate      | Birthdate | Address               | Sex  | Salary   | Super_ssn | Dno | Dname      | Dno | Mgr_ssn | Mgr_start_date |
++-------+----------+-----+------------+-----------+-----------------------+------+----------+-----------+-----+------------+-----+---------+----------------+
+|       | Barathan | 312 | 1996-09-03 | NULL      | #12 Prestige Downtown | M    | 13000.00 | 313       |   3 | Mechanical |   3 | 312     | 2018-01-01     |
++-------+----------+-----+------------+-----------+-----------------------+------+----------+-----------+-----+------------+-----+---------+----------------+
+1 row in set (0.00 sec)
+
+//QUERY 28
+
+mysql> select create_time,update_time from (select create_time,table_schema,update_time from information_schema.tables group by table_schema,create_time,update_time)t where table_schema='db6' and create_time>0 and update_time>0;
+
+//QUERY 30
+
+mysql> select Fname from employee where Lname like '%*%';
+Empty set (0.00 sec)
+
+//QUERY 31
+
+mysql> select replace(Dname,'*',' ') from department;
++------------------------+
+| replace(Dname,'*',' ') |
++------------------------+
+| Computers              |
+| Electronics            |
+| Mechanical             |
++------------------------+
+3 rows in set (0.00 sec)
+
+//QUERY 32
+
+mysql> select count(*) from employee where month(Bdate)=2 and year(Bdate)=1996;
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+1 row in set (0.00 sec)
+
+//QUERY 33
+
+mysql> select substring(Dname,1,4) from department;
++----------------------+
+| substring(Dname,1,4) |
++----------------------+
+| Comp                 |
+| Elec                 |
+| Mech                 |
++----------------------+
+3 rows in set (0.00 sec)
+
+
+//QUERY 34
+
+mysql> select upper(Fname) from employee;
++--------------+
+| upper(Fname) |
++--------------+
+| ABISHEK      |
+| AKSHITA      |
+| AARTHI       |
+| MADHUMITHA   |
+| ARAVIND      |
+| RAM          |
+| RAHUL        |
+| ASHWEN       |
+| NIVEDITA     |
+| SUJANA       |
+| PREETIKA     |
+| ASHWEN       |
++--------------+
+12 rows in set (0.00 sec)
+
+mysql> select lower(Fname) from employee;
++--------------+
+| lower(Fname) |
++--------------+
+| abishek      |
+| akshita      |
+| aarthi       |
+| madhumitha   |
+| aravind      |
+| ram          |
+| rahul        |
+| ashwen       |
+| nivedita     |
+| sujana       |
+| preetika     |
+| ashwen       |
++--------------+
+12 rows in set (0.00 sec)
+
+
+//QUERY 35
+
+mysql> select * from employee limit 5;
++------------+-------+--------------+-----+------------+------------------------------+------+----------+-----------+-----+------+------------+
+| Fname      | Minit | Lname        | Ssn | Bdate      | Address                      | Sex  | Salary   | Super_ssn | Dno | Sno  | Birthdate  |
++------------+-------+--------------+-----+------------+------------------------------+------+----------+-----------+-----+------+------------+
+| Abishek    | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram      | M    | 10000.00 | 112       |   1 |    1 | 1998-01-10 |
+| Akshita    | S     | Sridhar      | 112 | 1998-08-08 | #143 Uday St West Tambaram   | F    | 12000.00 | 113       |   1 |    2 | 1998-08-08 |
+| Aarthi     | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram      | F    | 11000.00 | 111       |   1 |    3 | 1998-04-03 |
+| Madhumitha | P     | Murali       | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar | F    | 10000.00 | 212       |   2 |    4 | 1998-07-02 |
+| Aravind    | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar      | M    | 11000.00 | 213       |   2 |    5 | 1998-10-02 |
++------------+-------+--------------+-----+------------+------------------------------+------+----------+-----------+-----+------+------------+
+5 rows in set (0.01 sec)
+
+//QUERY 36
+
+mysql> select * from employee limit 6,12;
++----------+-------+----------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Fname    | Minit | Lname    | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Dno | Sno  | Birthdate  |
++----------+-------+----------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Rahul    | B     | Jain     | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |   3 |    7 | 1998-12-12 |
+| Ashwen   |       | Barathan | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |    8 | 1996-09-04 |
+| Nivedita |       | Mahesh   | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |   3 |    9 | 1997-08-04 |
+| Sujana   |       | Ramesh   | 314 | 1996-02-03 | #218 Sowcarpet                | F    | 13000.00 | 311       |   3 |   10 | 1996-02-03 |
+| Preetika |       | Kumar    | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   3 |   11 | 1997-09-10 |
+| Ashwen   |       | Barathan | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |   12 | 1996-09-04 |
++----------+-------+----------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+6 rows in set (0.00 sec)
+
+//QUERY 38
+
+mysql> select Fname,Lname from employee;
++------------+--------------+
+| Fname      | Lname        |
++------------+--------------+
+| Abishek    | Arora        |
+| Akshita    | Sridhar      |
+| Aarthi     | Ravichandran |
+| Madhumitha | Murali       |
+| Aravind    | Jayaraman    |
+| Ram        | Raghav       |
+| Rahul      | Jain         |
+| Ashwen     | Barathan     |
+| Nivedita   | Mahesh       |
+| Sujana     | Ramesh       |
+| Preetika   | Kumar        |
+| Ashwen     | Barathan     |
++------------+--------------+
+12 rows in set (0.00 sec)
+
+//QUERY 39
+
+mysql> create table emptem as select * from employee;
+Query OK, 12 rows affected (0.83 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> delete from emptem;
+Query OK, 12 rows affected (0.09 sec)
+
+mysql> select * from emptem;
+Empty set (0.00 sec)
+
+//QUERY 40
+
+mysql> select distinct Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Sno,Birthdate from employee natural join employee_dup;
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Fname      | Minit | Lname        | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Dno | Sno  | Birthdate  |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+| Abishek    | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram       | M    | 10000.00 | 112       |   1 |    1 | 1998-01-10 |
+| Akshita    | S     | Sridhar      | 112 | 1998-08-08 | #143 Uday St West Tambaram    | F    | 12000.00 | 113       |   1 |    2 | 1998-08-08 |
+| Aarthi     | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram       | F    | 11000.00 | 111       |   1 |    3 | 1998-04-03 |
+| Madhumitha | P     | Murali       | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar  | F    | 10000.00 | 212       |   2 |    4 | 1998-07-02 |
+| Aravind    | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar       | M    | 11000.00 | 213       |   2 |    5 | 1998-10-02 |
+| Ram        | N     | Raghav       | 213 | 1998-11-12 | #177 Gajendra St Guindy       | M    | 12000.00 | 211       |   2 |    6 | 1998-11-12 |
+| Rahul      | B     | Jain         | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |   3 |    7 | 1998-12-12 |
+| Nivedita   |       | Mahesh       | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |   3 |    9 | 1997-08-04 |
+| Sujana     |       | Ramesh       | 314 | 1996-02-03 | #218 Sowcarpet                | F    | 13000.00 | 311       |   3 |   10 | 1996-02-03 |
+| Preetika   |       | Kumar        | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   3 |   11 | 1997-09-10 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   3 |   12 | 1996-09-04 |
+| Sravya     | R     | Tripati      | 316 | 1997-09-09 | #65 Garden Street Ashok Nagar | F    | 14000.00 | 314       |   3 |   13 | 1997-09-09 |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+-----+------+------------+
+12 rows in set (0.01 sec)
+
+//QUERY 41
+
+
+mysql> select * from employee_dup1 natural join employee;
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+------+------------+-----+
+| Fname      | Minit | Lname        | Ssn | Bdate      | Address                       | Sex  | Salary   | Super_ssn | Sno  | Birthdate  | Dno |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+------+------------+-----+
+| Abishek    | R     | Arora        | 111 | 1998-01-10 | #123 Plaza St Vanagaram       | M    | 10000.00 | 112       |    1 | 1998-01-10 |   1 |
+| Akshita    | S     | Sridhar      | 112 | 1998-08-08 | #143 Uday St West Tambaram    | F    | 12000.00 | 113       |    2 | 1998-08-08 |   1 |
+| Aarthi     | V     | Ravichandran | 113 | 1998-04-03 | #168 Kovil St Ramapuram       | F    | 11000.00 | 111       |    3 | 1998-04-03 |   1 |
+| Madhumitha | P     | Murali       | 211 | 1998-07-02 | #138 Gandhi Salai St T Nagar  | F    | 10000.00 | 212       |    4 | 1998-07-02 |   2 |
+| Aravind    | S     | Jayaraman    | 212 | 1998-10-02 | #18 Gaurav st K K Nagar       | M    | 11000.00 | 213       |    5 | 1998-10-02 |   2 |
+| Ram        | N     | Raghav       | 213 | 1998-11-12 | #177 Gajendra St Guindy       | M    | 12000.00 | 211       |    6 | 1998-11-12 |   2 |
+| Rahul      | B     | Jain         | 311 | 1998-12-12 | #1 Garuda St Rayala Nagar     | M    | 15000.00 | 312       |    7 | 1998-12-12 |   3 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |    8 | 1996-09-04 |   3 |
+| Nivedita   |       | Mahesh       | 313 | 1997-08-04 | #18 St Thomas Mount           | F    | 14000.00 | 314       |    9 | 1997-08-04 |   3 |
+| Sujana     |       | Ramesh       | 314 | 1996-02-03 | #218 Sowcarpet                | F    | 13000.00 | 311       |   10 | 1996-02-03 |   3 |
+| Preetika   |       | Kumar        | 315 | 1997-09-10 | #123 Bailing Street Velachery | F    | 12000.00 | 312       |   11 | 1997-09-10 |   3 |
+| Ashwen     |       | Barathan     | 312 | 1996-09-04 | #12 Prestige Downtown         | M    | 13000.00 | 313       |   12 | 1996-09-04 |   3 |
++------------+-------+--------------+-----+------------+-------------------------------+------+----------+-----------+------+------------+-----+
+12 rows in set (0.00 sec)
+
+
+//QUERY 42
+
+
+
+
+
+
+
+
+
+
+
+
+
+

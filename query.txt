@@ -1,0 +1,731 @@
+mysql> show tables;
++-------------------+
+| Tables_in_COMPANY |
++-------------------+
+| Department        |
+| Dependent         |
+| DeptLocations     |
+| Employee          |
+| Employee_Backup   |
+| Project           |
+| WorksOn           |
+| employee_backup   |
++-------------------+
+8 rows in set (0.00 sec)
+
+mysql> desc Employee;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   | MUL | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+10 rows in set (0.01 sec)
+
+//QUERY 4
+
+mysql> select SUBSTRING(Birthdate,1,4)'Year' from employee;
+(or)select year(Bdate) from Employee;
++------+
+| Year |
++------+
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1998 |
+| 1996 |
+| 1997 |
+| 1996 |
+| 1997 |
++------+
+11 rows in set (0.00 sec)
+
+
+Q5:
+mysql> select SUBSTRING(FName,1,3) from Employee;
++----------------------+
+| SUBSTRING(FName,1,3) |
++----------------------+
+| ARA                  |
+| VIN                  |
+| VIS                  |
+| PRI                  |
+| AIS                  |
+| SAN                  |
+| HAR                  |
+| RAM                  |
+| NAV                  |
+| VIN                  |
++----------------------+
+10 rows in set (0.10 sec)
+
+mysql> delete from employee_dup where Sno in(select Sno from employee where Fname in(select Fname from employee group by Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate having count(*)>=2)) and Sno!=(select Max(Sno) from employee where Fname in(select Fname from employee group by Fname,Minit,Lname,Ssn,Bdate,Address,Sex,Salary,Super_ssn,Dno,Birthdate having count(*)>=2));
+Query OK, 1 row affected (0.07 sec)
+
+Q10:
+mysql> select MIN(Salary) as 3rdmax from (select Salary from Employee order by Salary DESC LIMIT 3)temp;
++----------+
+| 3rdmax   |
++----------+
+| 75000.00 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select MIN(Salary) as 5thmax from (select Salary from Employee order by Salary DESC LIMIT 5)temp;
++----------+
+| 5thmax   |
++----------+
+| 65000.00 |
++----------+
+1 row in set (0.00 sec)
+
+
+Q19:
+mysql> select FName,LENGTH(FName) from Employee;
++-----------+---------------+
+| FName     | LENGTH(FName) |
++-----------+---------------+
+| ARAVINDH  |             8 |
+| VINANTHI  |             8 |
+| VISHAL    |             6 |
+| PRIYA     |             5 |
+| AISHU     |             5 |
+| SANTHOSH  |             8 |
+| HARSHITHA |             9 |
+| RAMESH    |             6 |
+| NAVYA     |             5 |
+| VINITHA   |             7 |
++-----------+---------------+
+10 rows in set (0.00 sec)
+
+Q3:
+mysql> select YEAR(BDate) from Employee;
++-------------+
+| YEAR(BDate) |
++-------------+
+|        1997 |
+|        1998 |
+|        1995 |
+|        1998 |
+|        1992 |
+|        2000 |
+|        1989 |
+|        1997 |
+|        1996 |
+|        1998 |
++-------------+
+10 rows in set (0.00 sec)
+
+Q1:
+mysql> select * from Employee where mod(SNo,2)<>0;
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo | SNo |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN  | M    | 70000.00 | 333445555 |   5 |   1 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN  | M    | 60000.00 | 888665555 |   5 |   3 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN | F    | 30000.00 | 333445555 |   5 |   5 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | 333445555 |   1 |   7 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 987654321 |   4 |   9 |
++-----------+-------+------------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+5 rows in set (0.00 sec)
+
+Q2:
+mysql> select * from Employee where mod(SNo,2)=0;
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName     | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| VINANTHI | S     | REDDY     | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |   2 |
+| PRIYA    | R     | DHARSHINI | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| SANTHOSH | G     | VARUN     | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 |   6 |
+| RAMESH   | K     | NARAYAN   | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 |   8 |
+| VINITHA  | M     | MAHESH    | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |  10 |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+5 rows in set (0.00 sec)
+
+Q13:
+mysql> select YEAR(BDate),MONTH(BDate),DAY(BDate) from Employee;
++-------------+--------------+------------+
+| YEAR(BDate) | MONTH(BDate) | DAY(BDate) |
++-------------+--------------+------------+
+|        1997 |            9 |         17 |
+|        1998 |            6 |          2 |
+|        1995 |           12 |         25 |
+|        1998 |            9 |          1 |
+|        1992 |           11 |         25 |
+|        2000 |           11 |         15 |
+|        1989 |           11 |         20 |
+|        1997 |            4 |         19 |
+|        1996 |           10 |         30 |
+|        1998 |            9 |         14 |
++-------------+--------------+------------+
+10 rows in set (0.00 sec)
+
+Q35:
+mysql> select * from Employee LIMIT 5;
++----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName      | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| ARAVINDH | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |   1 |
+| VINANTHI | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |   2 |
+| VISHAL   | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 |   3 |
+| PRIYA    | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| AISHU    | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 |   5 |
++----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+5 rows in set (0.00 sec)
+
+Q36:
+mysql> select * from Employee  order by SNo DESC LIMIT 5;
++-----------+-------+---------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+| FName     | Minit | LName   | Ssn       | Bdate      | Address                  | Sex  | Salary   | Superssn  | DNo | SNo |
++-----------+-------+---------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+| VINITHA   | M     | MAHESH  | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN     | F    | 65000.00 | 987654321 |   4 |  10 |
+| NAVYA     | V     | RAKESH  | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN     | F    | 80000.00 | 987654321 |   4 |   9 |
+| RAMESH    | K     | NARAYAN | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN    | F    | 45000.00 | 888665555 |   4 |   8 |
+| HARSHITHA | M     | REDDY   | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN  | F    | 35000.00 | 333445555 |   1 |   7 |
+| SANTHOSH  | G     | VARUN   | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN | M    | 40000.00 | 333445555 |   5 |   6 |
++-----------+-------+---------+-----------+------------+--------------------------+------+----------+-----------+-----+-----+
+5 rows in set (0.00 sec)
+
+Q39:
+mysql> create table emp like Employee;
+Query OK, 0 rows affected (0.33 sec)
+
+mysql> desc emp;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| FName    | varchar(20)   | NO   |     | NULL    |       |
+| Minit    | char(1)       | YES  |     | NULL    |       |
+| LName    | varchar(20)   | NO   |     | NULL    |       |
+| Ssn      | char(9)       | NO   | PRI | NULL    |       |
+| Bdate    | date          | YES  |     | NULL    |       |
+| Address  | varchar(30)   | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| Superssn | char(9)       | YES  | MUL | NULL    |       |
+| DNo      | int(11)       | NO   | MUL | NULL    |       |
+| SNo      | int(11)       | NO   |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+Q34:
+mysql> select upper(FName) from Employee;
++--------------+
+| upper(FName) |
++--------------+
+| ARAVINDH     |
+| VINANTHI     |
+| VISHAL       |
+| PRIYA        |
+| AISHU        |
+| SANTHOSH     |
+| HARSHITHA    |
+| RAMESH       |
+| NAVYA        |
+| VINITHA      |
++--------------+
+10 rows in set (0.00 sec)
+
+mysql> select lower(FName) from Employee;
++--------------+
+| lower(FName) |
++--------------+
+| aravindh     |
+| vinanthi     |
+| vishal       |
+| priya        |
+| aishu        |
+| santhosh     |
+| harshitha    |
+| ramesh       |
+| navya        |
+| vinitha      |
++--------------+
+10 rows in set (0.00 sec)
+
+Q33:
+mysql> select substring(DName,1,5) from Department;
++----------------------+
+| substring(DName,1,5) |
++----------------------+
+| ADMIN                |
+| HEADQ                |
+| RESEA                |
++----------------------+
+3 rows in set (0.00 sec)
+
+Q18:
+mysql> select ltrim(FName) from Employee;
++--------------+
+| ltrim(FName) |
++--------------+
+| ARAVINDH     |
+| VINANTHI     |
+| VISHAL       |
+| PRIYA        |
+| AISHU        |
+| SANTHOSH     |
+| HARSHITHA    |
+| RAMESH       |
+| NAVYA        |
+| VINITHA      |
++--------------+
+10 rows in set (0.00 sec)
+
+Q17:
+mysql> select locate('I',FName) from Employee where FName="VISHAL";
++-------------------+
+| locate('I',FName) |
++-------------------+
+|                 2 |
++-------------------+
+1 row in set (0.00 sec)
+
+Q20:
+mysql> select FName,replace(FName,'A','$') from Employee;
++-----------+------------------------+
+| FName     | replace(FName,'A','$') |
++-----------+------------------------+
+| ARAVINDH  | $R$VINDH               |
+| VINANTHI  | VIN$NTHI               |
+| VISHAL    | VISH$L                 |
+| PRIYA     | PRIY$                  |
+| AISHU     | $ISHU                  |
+| SANTHOSH  | S$NTHOSH               |
+| HARSHITHA | H$RSHITH$              |
+| RAMESH    | R$MESH                 |
+| NAVYA     | N$VY$                  |
+| VINITHA   | VINITH$                |
++-----------+------------------------+
+10 rows in set (0.00 sec)
+
+Q21:
+mysql> select concat(FName,'_',LName) from Employee;
++-------------------------+
+| concat(FName,'_',LName) |
++-------------------------+
+| ARAVINDH_PARANAN        |
+| VINANTHI_REDDY          |
+| VISHAL_MAHESWARAN       |
+| PRIYA_DHARSHINI         |
+| AISHU_VENKY             |
+| SANTHOSH_VARUN          |
+| HARSHITHA_REDDY         |
+| RAMESH_NARAYAN          |
+| NAVYA_RAKESH            |
+| VINITHA_MAHESH          |
++-------------------------+
+10 rows in set (0.00 sec)
+
+Q14:
+mysql> select current_time() as CurrentTime;
++-------------+
+| CurrentTime |
++-------------+
+| 15:21:49    |
++-------------+
+1 row in set (0.00 sec)
+
+Q15:
+mysql> select day(current_date()) as Date;
++------+
+| Date |
++------+
+|    3 |
++------+
+1 row in set (0.00 sec)
+
+mysql> select day(now()) as Date;
++------+
+| Date |
++------+
+|    3 |
++------+
+1 row in set (0.00 sec)
+
+Q16:
+mysql> select day(current_date()+1) as NextDate;
++----------+
+| NextDate |
++----------+
+|        4 |
++----------+
+1 row in set (0.00 sec)
+
+Q11:
+mysql> select * from Employee order by Salary DESC limit 2;
++----------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName  | Ssn       | Bdate      | Address                 | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+| VINANTHI | S     | REDDY  | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN | F    | 85000.00 | 888665555 |   5 |   2 |
+| NAVYA    | V     | RAKESH | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN    | F    | 80000.00 | 987654321 |   4 |   9 |
++----------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+2 rows in set (0.00 sec)
+
+mysql> select * from Employee order by Salary DESC limit 5;
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName     | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| VINANTHI | S     | REDDY     | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |   2 |
+| NAVYA    | V     | RAKESH    | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 |   9 |
+| PRIYA    | R     | DHARSHINI | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| ARAVINDH | P     | PARANAN   | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |   1 |
+| VINITHA  | M     | MAHESH    | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |  10 |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+5 rows in set (0.00 sec)
+
+Q23:
+mysql> select Sex as gender,count(*) from Employee where BDate>"1990-01-01" and BDate<"1998-12-31" group by Sex;
++--------+----------+
+| gender | count(*) |
++--------+----------+
+| F      |        6 |
+| M      |        2 |
++--------+----------+
+2 rows in set (0.00 sec)
+
+Q22:
+mysql> select * from Employee where UPPER(FName) like "%VIN%";
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName   | Ssn       | Bdate      | Address                 | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+| ARAVINDH | P     | PARANAN | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN | M    | 70000.00 | 333445555 |   5 |   1 |
+| VINANTHI | S     | REDDY   | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN | F    | 85000.00 | 888665555 |   5 |   2 |
+| VINITHA  | M     | MAHESH  | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN    | F    | 65000.00 | 987654321 |   4 |  10 |
++----------+-------+---------+-----------+------------+-------------------------+------+----------+-----------+-----+-----+
+3 rows in set (0.00 sec)
+
+Q26:
+mysql> select FName from Employee where length(FName)="7" and FName like "%A";
++---------+
+| FName   |
++---------+
+| VINITHA |
++---------+
+1 row in set (0.00 sec)
+
+Q27:
+mysql> select * from Employee where month(BDate)="09";
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName     | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| ARAVINDH | P     | PARANAN   | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |   1 |
+| PRIYA    | R     | DHARSHINI | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| VINITHA  | M     | Q27MAHESH    | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |  10 |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+3 rows in set (0.00 sec)
+
+Q40:
+mysql> select * from Employee UNION select * from employee_backup;
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName     | Minit | LName      | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| ARAVINDH  | P     | PARANAN    | 123456789 | 1997-09-17 | 123 MYLAPORE,CHENNAI,TN   | M    | 70000.00 | 333445555 |   5 |   1 |
+| VINANTHI  | S     | REDDY      | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |   2 |
+| VISHAL    | P     | MAHESWARAN | 333445555 | 1995-12-25 | 321 ALWARPET,CHENNAI,TN   | M    | 60000.00 | 888665555 |   5 |   3 |
+| PRIYA     | R     | DHARSHINI  | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| AISHU     | V     | VENKY      | 453453453 | 1992-11-25 | 789 MOGAPPAIR,CHENNAI,TN  | F    | 30000.00 | 333445555 |   5 |   5 |
+| SANTHOSH  | G     | VARUN      | 666884444 | 2000-11-15 | 369 MAMBAKKAM,CHENNAI,TN  | M    | 40000.00 | 333445555 |   5 |   6 |
+| HARSHITHA | M     | REDDY      | 888665555 | 1989-11-20 | 456 KANDIGAI,CHENNAI,TN   | F    | 35000.00 | 333445555 |   1 |   7 |
+| RAMESH    | K     | NARAYAN    | 987654321 | 1997-04-19 | 356 TNAGAR,CHENNAI,TN     | F    | 45000.00 | 888665555 |   4 |   8 |
+| NAVYA     | V     | RAKESH     | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 |   9 |
+| VINITHA   | M     | MAHESH     | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |  10 |
++-----------+-------+------------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+10 rows in set (0.00 sec)
+
+Q38:
+mysql> select FName from Employee union select LName from Employee;
++------------+
+| FName      |
++------------+
+| ARAVINDH   |
+| VINANTHI   |
+| VISHAL     |
+| PRIYA      |
+| AISHU      |
+| SANTHOSH   |
+| HARSHITHA  |
+| RAMESH     |
+| NAVYA      |
+| VINITHA    |
+| PARANAN    |
+| REDDY      |
+| MAHESWARAN |
+| DHARSHINI  |
+| VENKY      |
+| VARUN      |
+| NARAYAN    |
+| RAKESH     |
+| MAHESH     |
++------------+
+19 rows in set (0.00 sec)
+
+Q6:
+mysql> select date_format(BDate,"%Y-%m-%d") as format_of_date,BDate from Employee;
++----------------+------------+
+| format_of_date | BDate      |
++----------------+------------+
+| 1997-09-17     | 1997-09-17 |
+| 1998-06-02     | 1998-06-02 |
+| 1995-12-25     | 1995-12-25 |
+| 1998-09-01     | 1998-09-01 |
+| 1992-11-25     | 1992-11-25 |
+| 2000-11-15     | 2000-11-15 |
+| 1989-11-20     | 1989-11-20 |
+| 1997-04-19     | 1997-04-19 |
+| 1996-10-30     | 1996-10-30 |
+| 1998-09-14     | 1998-09-14 |
++----------------+------------+
+10 rows in set (0.00 sec)
+
+Q12:
+mysql> create view size as (select table_schema,sum(data_length+index_length)/1024/1024 as total_in_mb from information_schema.tables group by table_schema);
+Query OK, 0 rows affected (0.34 sec)
+
+Q24:
+mysql> select User,authentication_string from mysql.user where concat(User,'@','localhost') = user();
+
++------+-------------------------------------------+
+| User | authentication_string                     |
++------+-------------------------------------------+
+| root | *B1F94B3C31384FF2192E8DA779FDB272431C54D8 |
++------+-------------------------------------------+
+1 row in set (0.00 sec)
+
+Q25:
+mysql> select * from Employee where FName in (select FName from (select FName,(length(FName)-length(Replace(FName,' ',''))+1) as no_of_words from Employee)t where no_of_words >=3);
+Empty set (0.00 sec)
+
+Q28:
+mysql> select create_time,update_time from (select create_time,table_schema,update_time from information_schema.tables group by table_schema,create_time,update_time)t where table_schema='OFFICE3' and create_time>0 and update_time>0;
+Empty set (0.09 sec)
+
+Q29:
+mysql> select * from(select * from Employee where Salary>=60000)t natural join (select * from Employee where Sex='F')e;
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| FName    | Minit | LName     | Ssn       | Bdate      | Address                   | Sex  | Salary   | Superssn  | DNo | SNo |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+| VINANTHI | S     | REDDY     | 234567891 | 1998-06-02 | 389 SAIDAPET,CHENNAI,TN   | F    | 85000.00 | 888665555 |   5 |   2 |
+| PRIYA    | R     | DHARSHINI | 345678912 | 1998-09-01 | 654 ROYAPETTAH,CHENNAI,TN | F    | 75000.00 | 987654321 |   4 |   4 |
+| NAVYA    | V     | RAKESH    | 987987987 | 1996-10-30 | 975 BESSI,CHENNAI,TN      | F    | 80000.00 | 987654321 |   4 |   9 |
+| VINITHA  | M     | MAHESH    | 999887777 | 1998-09-14 | 453 ADYAR,CHENNAI,TN      | F    | 65000.00 | 987654321 |   4 |  10 |
++----------+-------+-----------+-----------+------------+---------------------------+------+----------+-----------+-----+-----+
+4 rows in set (0.00 sec)
+
+Q30:
+mysql> select FName from Employee where (select locate('*',LName))>0;
+Empty set (0.00 sec)
+
+Q31:
+mysql> select Replace(DName,'E',' ') as modified_dept_name from Department;
++--------------------+
+| modified_dept_name |
++--------------------+
+| ADMINISTRATION     |
+| H ADQUART RS       |
+| R S ARCH           |
++--------------------+
+3 rows in set (0.01 sec)
+
+Q32:
+mysql> select count(*) from Employee where Ssn in (select Mgr_ssn from Department where (month(Mgr_start_date)="04") and (year(Mgr_start_date)>=2005));
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+1 row in set (0.01 sec)
+
+Q42:
+mysql> select * from Employee where Ssn not in (select Ssn from (select * from Employee natural join employee_backup)t);
+Empty set (0.01 sec)
+
+Q43:
+mysql> select database();
++------------+
+| database() |
++------------+
+| COMPANY    |
++------------+
+1 row in set (0.00 sec)
+
+Q44:
+mysql> select CURRENT_USER();
++----------------+
+| CURRENT_USER() |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+Q45:
+mysql> select version();
++-------------------------+
+| version()               |
++-------------------------+
+| 5.7.21-0ubuntu0.16.04.1 |
++-------------------------+
+1 row in set (0.00 sec)
+
+Q46:
+mysql> select 2&15;
++------+
+| 2&15 |
++------+
+|    2 |
++------+
+1 row in set (0.00 sec)
+
+mysql> select 2 | 15;
++--------+
+| 2 | 15 |
++--------+
+|     15 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select 2 XOR  15;
++-----------+
+| 2 XOR  15 |
++-----------+
+|         0 |
++-----------+
+1 row in set (0.00 sec)
+
+Q47:
+mysql> select * from Employee where FName like '%mysql%' or LName like '%mysql %' or FName like '%oracle%' or LName like '%oracle%';
+Empty set (0.00 sec)
+
+Q48:
+mysql> select Datediff('2018-09-28','2018-09-19') as difference;
++------------+
+| difference |
++------------+
+|          9 |
++------------+
+1 row in set (0.00 sec)
+
+Q49:
+mysql> select CURRENT_DATE() + 1 ;
++--------------------+
+| CURRENT_DATE() + 1 |
++--------------------+
+|           20180404 |
++--------------------+
+1 row in set (0.00 sec)
+
+Q50:
+mysql> select curdate(),date_add(curdate(),interval ' 2 5000' hour_minute);
++------------+----------------------------------------------------+
+| curdate()  | date_add(curdate(),interval ' 2 5000' hour_minute) |
++------------+----------------------------------------------------+
+| 2018-04-03 | 2018-04-06 13:20:00                                |
++------------+----------------------------------------------------+
+1 row in set (0.00 sec)
+
+Q51:
+mysql> select floor(25.75);
++--------------+
+| floor(25.75) |
++--------------+
+|           25 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql>select ceil(25.75);
++-------------+
+| ceil(25.75) |
++-------------+
+|          26 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql>select round(126.84,1);
++-----------------+
+| round(126.84,1) |
++-----------------+
+|           126.8 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql>select truncate(126.856,2);
++---------------------+
+| truncate(126.856,2) |
++---------------------+
+|              126.85 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql>select power(2,10);
++-------------+
+| power(2,10) |
++-------------+
+|        1024 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select abs(-3.567);
++-------------+
+| abs(-3.567) |
++-------------+
+|       3.567 |
++-------------+
+1 row in set (0.01 sec)
+
+mysql> select log10(32);
++-------------------+
+| log10(32)         |
++-------------------+
+| 1.505149978319906 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> select log(2,32);
++-----------+
+| log(2,32) |
++-----------+
+|         5 |
++-----------+
+1 row in set (0.00 sec)
+
+mysql> select log2(32);
++----------+
+| log2(32) |
++----------+
+|        5 |
++----------+
+1 row in set (0.00 sec)
+
+Q53:
+mysql> select if((select strcmp('vini','vini'))=0,'yes','no') as Comp_result;
++-------------+
+| Comp_result |
++-------------+
+| yes         |
++-------------+
+1 row in set (0.00 sec)
+
+Q55:
+mysql> select ifnull(100-NULL,"Yes") as Result;
++--------+
+| Result |
++--------+
+| Yes    |
++--------+
+1 row in set (0.00 sec)
+
+Q56:
+mysql> GRANT ALL PRIVILEGES ON OFFICE3.* TO 'root'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
